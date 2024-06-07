@@ -1,0 +1,11 @@
+html,
+body {
+  margin: 0px;
+  width: 100%;
+  /* background-color: #f5f6fe; */
+  min-height: 100vh;
+}
+
+body * {
+  font-family: "Pretendard Regular";
+}
