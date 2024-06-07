@@ -8,6 +8,7 @@ export default {
         "main-blue": "#DEE2FF",
         "main-dark-blue": "#CFD4FF",
         "bg-blue": "#F5F6FE",
+        "main-pink": "#EAA1E3",
       },
     },
   },

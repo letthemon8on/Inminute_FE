@@ -1,6 +1,7 @@
 import Folder from "../components/Folder";
 import NoteListItem from "../components/NoteListItem";
 import Navbar from "../components/Navbar";
+import NewNoteModal from "../components/modal/NewNoteModal";
 
 const List: React.FC = () => {
   return (
@@ -22,10 +23,7 @@ const List: React.FC = () => {
               <div className="mr-1 my-0.5 text-2xl">🔎</div>
               <input className="grow px-2 outline-none" />
             </div>
-
-            <button className="bg-gradient-to-r from-cyan-50 to-pink-50 rounded-2xl w-36 h-11 drop-shadow-lg text-gray-500 text-xl">
-              New Note +
-            </button>
+            <NewNoteModal />
           </div>
           <section>
             <NoteListItem />
