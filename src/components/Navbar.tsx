@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import logo from "./../assets/logo_transparent.svg";
 import { useNavigate } from "react-router-dom";
-import Btn from "./Btn";
+import LogoutModal from "./modal/LogoutModal";
 
 const Navbar: React.FC = () => {
   const nav = useNavigate();
@@ -28,7 +28,10 @@ const Navbar: React.FC = () => {
           </List>
         </Lists>
       </NavLeft>
-      <Btn label="Log out" />
+      {/* <div className="mr-10">
+        <Btn label="Log out" />
+      </div> */}
+      <LogoutModal />
     </NavContainer>
   );
 };

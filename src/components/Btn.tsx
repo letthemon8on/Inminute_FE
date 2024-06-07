@@ -8,7 +8,7 @@ interface BtnProps {
 
 const Btn: React.FC<BtnProps> = ({ label }) => {
   return (
-    <button className="w-28 h-12 border-none bg-gray-200/[.7] text-lg rounded-lg mr-10 cursor-pointer">
+    <button className="w-28 h-12 border-none bg-gray-200/[.7] text-lg rounded-lg cursor-pointer">
       {label}
     </button>
   );
