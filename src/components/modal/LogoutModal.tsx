@@ -2,6 +2,7 @@ import "./../../styles/fonts/font.css";
 import { useCallback, useState } from "react";
 import Btn from "../Btn";
 import Modal from "./Modal";
+import x from "./../../assets/x.svg";
 
 export default function LogoutModal() {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -16,16 +17,16 @@ export default function LogoutModal() {
         <Modal onClickToggleModal={onClickToggleModal}>
           <div
             onClick={onClickToggleModal}
-            className="cursor-pointer absolute right-6 top-4 text-gray-500"
+            className="cursor-pointer absolute right-6 top-6 text-gray-500"
           >
-            x
+            <img className="w-5" src={x} />
           </div>
           <img className="w-14 mt-16" src="/favicon.svg" />
           <div className="mt-4 text-3xl text-gray-500">Log out</div>
           <div className="mt-8 text-gray-500 pt-light">
             로그아웃하시겠습니까?
           </div>
-          <div className="flex mt-10 mb-14">
+          <div className="flex mt-10 mb-16">
             <button className="border boredr-gray-500 text-gray-500 w-28 bg-main-pink/[.3] rounded-xl py-1 mx-4">
               Yes
             </button>
