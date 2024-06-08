@@ -1,6 +1,9 @@
 import "./../../styles/fonts/font.css";
 import { useCallback, useState } from "react";
 import Modal from "./Modal";
+import note from "./../../assets/note.svg";
+import plus from "./../../assets/plus.svg";
+import x from "./../../assets/x.svg";
 
 export default function NewNoteModal() {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -15,9 +18,9 @@ export default function NewNoteModal() {
         <Modal onClickToggleModal={onClickToggleModal}>
           <div
             onClick={onClickToggleModal}
-            className="cursor-pointer absolute right-6 top-4 text-gray-500"
+            className="cursor-pointer absolute right-6 top-6 text-gray-500"
           >
-            x
+            <img className="w-5" src={x} />
           </div>
           <img className="w-14 mt-16" src="/favicon.svg" />
           <div className="mt-4 text-3xl text-gray-500">New Note</div>
@@ -26,12 +29,6 @@ export default function NewNoteModal() {
             <form className="mb-3">
               <input className="h-9 w-72 rounded-xl border border-gray-200 px-2 outline-none text-gray-500 text-base" />
             </form>
-
-            <h4 className="ml-2 text-sm text-gray-400">Zoom 링크</h4>
-            <form className="mb-3">
-              <input className="h-9 w-72 rounded-xl border border-gray-200 px-2 outline-none text-gray-500 text-base" />
-            </form>
-
             <h4 className="ml-2 text-sm text-gray-400">폴더</h4>
             <form>
               <select className="h-9 w-72 rounded-xl border border-gray-200 px-2 outline-none text-gray-500">
@@ -40,7 +37,7 @@ export default function NewNoteModal() {
               </select>
             </form>
           </section>
-          <div className="flex mt-10 mb-14">
+          <div className="flex mt-10 mb-16">
             <button className="border border-gray-200 text-gray-500 w-72 h-9 bg-main-pink/[.3] rounded-xl py-1 mx-4">
               회의록 생성
             </button>
@@ -49,9 +46,12 @@ export default function NewNoteModal() {
       )}
       <button
         onClick={onClickToggleModal}
-        className="bg-gradient-to-r from-cyan-50 to-pink-50 rounded-2xl w-36 h-11 drop-shadow-lg text-gray-500 text-xl"
+        className="bg-gradient-to-r from-cyan-50 to-pink-50 rounded-2xl w-32 h-11 drop-shadow-lg text-gray-500 text-xl"
       >
-        New Note +
+        <div className="flex justify-between mx-4">
+          <span>New</span> <img className="w-6 ml-1" src={note} />
+          <img className="w-5" src={plus} />
+        </div>
       </button>
     </section>
   );

@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import chevron_up from "./../assets/chevron/chevron_up.svg";
+import chevron_down from "./../assets/chevron/chevron_down.svg";
 
 const DropDown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +43,13 @@ const DropDown: React.FC = () => {
       >
         {/* options 배열에서 현재 선택된 옵션을 찾음 */}
         {options.find((option) => option.value === selectedOption)?.label}
-        <span className="mx-1">{isOpen ? "^" : "v"}</span>
+        <span className="mx-1">
+          {isOpen ? (
+            <img className="w-5" src={chevron_up} />
+          ) : (
+            <img className="w-5" src={chevron_down} />
+          )}
+        </span>
       </div>
       {isOpen && (
         <div className="absolute w-full top-12 border border-solid border-gray-200 rounded-2xl bg-white z-10 shadow-lg text-gray-500">

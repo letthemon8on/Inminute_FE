@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import "./../styles/fonts/font.css";
+import calendar from "./../assets/calendar.svg";
+import clock from "./../assets/clock.svg";
 
 export default function NoteListItem() {
   return (
@@ -7,10 +9,15 @@ export default function NoteListItem() {
       <Link to={"/note/:id"}>
         <div className="flex justify-between items-center">
           <h3 className="mx-10 mt-4 text-2xl pt-medium">프로젝트 이름</h3>
-          <div className="text-gray-500 mt-4 mr-4">
-            <span className="mr-4">🗓️ 240405 Fri</span>
-            <span className="mr-4">⏰ 10:35</span>
-            <span className="mr-4">⌛ 00:09:40</span>
+          <div className="text-gray-500 mt-4 mr-4 flex">
+            <span className="mr-4 flex items-center">
+              <img className="w-5 mx-1" src={calendar} />
+              <span>240405 Fri</span>
+            </span>
+            <span className="mr-4 flex items-center">
+              <img className="w-5 mx-1" src={clock} />
+              <span>10:35</span>
+            </span>
           </div>
         </div>
 
