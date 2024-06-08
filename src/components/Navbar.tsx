@@ -6,6 +6,7 @@ import LogoutModal from "./modal/LogoutModal";
 const Navbar: React.FC = () => {
   const nav = useNavigate();
   const currentPath = window.location.pathname;
+  const isList = currentPath === "/list" || /^\/note\/\d+$/.test(currentPath);
 
   return (
     <NavContainer>
@@ -20,17 +21,11 @@ const Navbar: React.FC = () => {
           >
             about
           </List>
-          <List
-            onClick={() => nav("/list")}
-            className={currentPath === "/list" ? "active" : ""}
-          >
+          <List onClick={() => nav("/list")} className={isList ? "active" : ""}>
             list
           </List>
         </Lists>
       </NavLeft>
-      {/* <div className="mr-10">
-        <Btn label="Log out" />
-      </div> */}
       <LogoutModal />
     </NavContainer>
   );
