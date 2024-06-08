@@ -12,7 +12,7 @@ const List: React.FC = () => {
       <div className="flex w-full min-h-screen ">
         <Folder />
 
-        <div className="grow p-4 mr-32 mt-6">
+        <div className="grow p-4 mr-24 mt-6">
           <div className="flex justify-between mb-4 items-center">
             <DropDown />
 

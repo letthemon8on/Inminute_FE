@@ -9,6 +9,7 @@ import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
+import zoom from "./../assets/zoom.svg";
 
 const Note: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Script");
@@ -44,15 +45,18 @@ const Note: React.FC = () => {
             </div>
           </div>
           <div className="flex justify-between">
-            <h2 className="text-4xl mt-4 mb-3">프로젝트 이름</h2>
-            <div className="flex items-center">
-              <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
-                <img src={pencil} />
-              </button>
-              <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
-                <img src={trash} />
-              </button>
+            <div className="flex">
+              <h2 className="text-4xl my-3 mr-4">프로젝트 이름</h2>
+              <div className="flex items-center">
+                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                  <img src={pencil} />
+                </button>
+                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                  <img src={trash} />
+                </button>
+              </div>
             </div>
+            <img className="w-24 mr-2 cursor-pointer" src={zoom} />
           </div>
 
           <hr />

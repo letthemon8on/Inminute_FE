@@ -5,7 +5,7 @@ import clock from "./../assets/clock.svg";
 
 export default function NoteListItem() {
   return (
-    <div className="w-200 h-24 rounded-xl bg-white mb-4">
+    <div className="h-24 rounded-xl bg-white mb-4">
       <Link to={"/note/:id"}>
         <div className="flex justify-between items-center">
           <h3 className="mx-10 mt-4 text-2xl pt-medium">프로젝트 이름</h3>
