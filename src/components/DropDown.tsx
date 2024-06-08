@@ -2,18 +2,35 @@ import React, { useState, useRef, useEffect } from "react";
 import chevron_up from "./../assets/chevron/chevron_up.svg";
 import chevron_down from "./../assets/chevron/chevron_down.svg";
 
-const DropDown: React.FC = () => {
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface DropDownProps {
+  options: Option[];
+  selectedOption: string;
+  onSelect: (value: string) => void;
+  width?: string;
+  height?: string;
+  top?: string;
+  py?: string;
+}
+
+const DropDown: React.FC<DropDownProps> = ({
+  options,
+  selectedOption,
+  onSelect,
+  width,
+  height,
+  top,
+  py,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("latest");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const options = [
-    { value: "latest", label: "최신순" },
-    { value: "oldest", label: "오래된 순" },
-  ];
-
   const handleSelectOption = (value: string) => {
-    setSelectedOption(value);
+    onSelect(value);
     setIsOpen(false);
   };
 
@@ -36,14 +53,14 @@ const DropDown: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-28" ref={dropdownRef}>
+    <div className={`relative ${width}`} ref={dropdownRef}>
       <div
-        className="h-11 flex items-center justify-between cursor-pointer border border-solid border-gray-200 bg-white rounded-2xl px-3 text-gray-500"
+        className={`${height} flex items-center justify-between cursor-pointer border border-solid border-gray-200 bg-white rounded-2xl px-3 text-gray-500`}
         onClick={() => setIsOpen(!isOpen)}
       >
         {/* options 배열에서 현재 선택된 옵션을 찾음 */}
         {options.find((option) => option.value === selectedOption)?.label}
-        <span className="mx-1">
+        <span>
           {isOpen ? (
             <img className="w-5" src={chevron_up} />
           ) : (
@@ -52,10 +69,12 @@ const DropDown: React.FC = () => {
         </span>
       </div>
       {isOpen && (
-        <div className="absolute w-full top-12 border border-solid border-gray-200 rounded-2xl bg-white z-10 shadow-lg text-gray-500">
+        <div
+          className={`absolute w-full ${top} border border-solid border-gray-200 rounded-2xl bg-white z-10 shadow-lg text-gray-500`}
+        >
           {options.map((option, index) => (
             <div
-              className={`p-3 cursor-pointer hover:bg-gray-200 ${
+              className={`px-3 ${py} cursor-pointer hover:bg-gray-200 ${
                 index === 0
                   ? "hover:rounded-t-2xl"
                   : index === options.length - 1
