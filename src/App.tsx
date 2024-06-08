@@ -9,21 +9,24 @@ import New from "./pages/New";
 import Note from "./pages/Note";
 import Notfound from "./pages/Notfound";
 import Home from "./pages/Home";
+import { FolderProvider } from "./context/FolderContext";
 
 const App: React.FC = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/list" element={<List />} />
-            <Route path="/new" element={<New />} />
-            <Route path="/note/:id" element={<Note />} />
-            <Route path="*" element={<Notfound />} />
-          </Routes>
-        </BrowserRouter>
+        <FolderProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/list" element={<List />} />
+              <Route path="/new" element={<New />} />
+              <Route path="/note/:id" element={<Note />} />
+              <Route path="*" element={<Notfound />} />
+            </Routes>
+          </BrowserRouter>
+        </FolderProvider>
       </ThemeProvider>
     </>
   );

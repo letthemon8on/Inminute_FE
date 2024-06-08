@@ -5,19 +5,24 @@ import note from "./../../assets/note.svg";
 import plus from "./../../assets/plus.svg";
 import x from "./../../assets/x.svg";
 import DropDown from "../DropDown";
+// import { initialFolders } from "./../../data/dummyData";
+import { useFolderContext } from "../../context/FolderContext";
 
-export default function NewNoteModal() {
+const NewNoteModal: React.FC = () => {
+  const { folders } = useFolderContext();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState("학교");
+  const [selectedOption, setSelectedOption] = useState<number>(
+    folders.length > 0 ? folders[0].id : 0
+  );
 
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
   }, [isOpenModal]);
 
-  const options = [
-    { value: "학교", label: "학교" },
-    { value: "동아리", label: "동아리" },
-  ];
+  const options = folders.map((folder) => ({
+    value: folder.id,
+    label: folder.name,
+  }));
 
   return (
     <section>
@@ -66,4 +71,6 @@ export default function NewNoteModal() {
       </button>
     </section>
   );
-}
+};
+
+export default NewNoteModal;
