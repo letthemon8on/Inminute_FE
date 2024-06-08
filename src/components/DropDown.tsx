@@ -3,14 +3,14 @@ import chevron_up from "./../assets/chevron/chevron_up.svg";
 import chevron_down from "./../assets/chevron/chevron_down.svg";
 
 interface Option {
-  value: string;
+  value: number;
   label: string;
 }
 
 interface DropDownProps {
   options: Option[];
-  selectedOption: string;
-  onSelect: (value: string) => void;
+  selectedOption: number;
+  onSelect: (value: number) => void;
   width?: string;
   height?: string;
   top?: string;
@@ -29,7 +29,7 @@ const DropDown: React.FC<DropDownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectOption = (value: string) => {
+  const handleSelectOption = (value: number) => {
     onSelect(value);
     setIsOpen(false);
   };
@@ -70,7 +70,7 @@ const DropDown: React.FC<DropDownProps> = ({
       </div>
       {isOpen && (
         <div
-          className={`absolute w-full ${top} border border-solid border-gray-200 rounded-2xl bg-white z-10 shadow-lg text-gray-500`}
+          className={`absolute w-full ${top} border border-solid border-gray-200 rounded-2xl bg-white z-10 shadow-lg text-gray-500 max-h-60 overflow-y-auto`}
         >
           {options.map((option, index) => (
             <div

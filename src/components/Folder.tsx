@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FolderItem from "./FolderItem";
-import folder from "./../assets/folder.svg";
+import folderIcon from "./../assets/folder.svg";
 import plus from "./../assets/plus.svg";
 import minus from "./../assets/minus.svg";
-import { useNavigate } from "react-router-dom";
+import { useFolderContext } from "./../context/FolderContext";
 
 const Folder: React.FC = () => {
   const [newFolder, setNewFolder] = useState(false);
+  const [folderName, setFolderName] = useState("");
+  const { folders, notes, addFolder } = useFolderContext(); // Context 사용
+
   const nav = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (newFolder && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [newFolder]);
 
   const handleNewFolderClick = () => {
     setNewFolder(true);
@@ -15,6 +26,14 @@ const Folder: React.FC = () => {
 
   const handleCancelNewFolderClick = () => {
     setNewFolder(false);
+  };
+
+  const handleAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && folderName.trim()) {
+      addFolder(folderName.trim());
+      setFolderName("");
+      setNewFolder(false);
+    }
   };
 
   return (
@@ -26,7 +45,7 @@ const Folder: React.FC = () => {
             onClick={handleNewFolderClick}
           >
             <div className="flex justify-between mx-4">
-              <span>New</span> <img className="w-6 ml-1" src={folder} />
+              <span>New</span> <img className="w-6 ml-1" src={folderIcon} />
               <img className="w-5" src={plus} />
             </div>
           </button>
@@ -37,27 +56,34 @@ const Folder: React.FC = () => {
             onClick={handleCancelNewFolderClick}
           >
             <div className="flex justify-between mx-4">
-              <span>New</span> <img className="w-6 ml-1" src={folder} />
+              <span>New</span> <img className="w-6 ml-1" src={folderIcon} />
               <img className="w-5" src={minus} />
             </div>
           </button>
           <div className="relative flex w-56 h-8 mb-3 items-center">
             <div className="absolute ml-2 mr-1 text-2xl">
-              <img className="w-6" src={folder} />
+              <img className="w-6" src={folderIcon} />
             </div>
-            <input className="grow pl-9 pr-2 py-1 rounded-lg border border-gray-300 outline-none" />
+            <input
+              className="grow pl-9 pr-2 py-1 rounded-lg border border-gray-300 outline-none"
+              ref={inputRef}
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              onKeyDown={handleAddFolder}
+            />
           </div>
         </div>
         <h3
           onClick={() => nav("/list")}
           className="pt-1 text-lg flex items-center cursor-pointer"
         >
-          <img className="w-5 ml-2 mr-1" src={folder} />
+          <img className="w-5 ml-2 mr-1" src={folderIcon} />
           전체 폴더
         </h3>
         <div className="pl-4 pt-2">
-          <FolderItem />
-          <FolderItem />
+          {folders.map((folder) => (
+            <FolderItem key={folder.id} folder={folder} notes={notes} />
+          ))}
         </div>
       </div>
     </div>

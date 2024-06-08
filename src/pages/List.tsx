@@ -7,11 +7,11 @@ import DropDown from "../components/DropDown";
 import search from "../assets/search.svg";
 
 const List: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState("latest");
+  const [selectedOption, setSelectedOption] = useState<number>(0);
 
   const options = [
-    { value: "latest", label: "최신순" },
-    { value: "oldest", label: "오래된 순" },
+    { value: 0, label: "최신순" },
+    { value: 1, label: "오래된 순" },
   ];
 
   return (
