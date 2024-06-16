@@ -1,5 +1,5 @@
 import "./../../styles/fonts/font.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 import note from "./../../assets/note.svg";
 import plus from "./../../assets/plus.svg";
@@ -15,10 +15,13 @@ const NewNoteModal: React.FC = () => {
     folders.length > 0 ? folders[0].id : 0
   );
   const [noteTitle, setNoteTitle] = useState<string>("");
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
 
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
+    setErrorMessage("");
   }, [isOpenModal]);
 
   const options = folders.map((folder) => ({
@@ -26,10 +29,27 @@ const NewNoteModal: React.FC = () => {
     label: folder.name,
   }));
 
+  useEffect(() => {
+    if (isOpenModal && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpenModal]);
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleCreateNote();
+    }
+  };
+
   const handleCreateNote = () => {
     if (noteTitle.trim() && selectedOption) {
       const newNote = addNote(noteTitle, selectedOption);
-      navigate(`/note/${newNote.id}`);
+      setNoteTitle("");
+      setOpenModal(false);
+      nav(`/note/${newNote.id}`);
+    } else {
+      setErrorMessage("회의 제목을 입력해주세요.");
     }
   };
 
@@ -45,14 +65,25 @@ const NewNoteModal: React.FC = () => {
           </div>
           <img className="w-14 mt-16" src="/favicon.svg" />
           <div className="mt-4 text-3xl text-gray-500">New Note</div>
-          <section className="w-72 mt-8">
+          <section className="w-72 mt-8" onKeyDown={handleKeyPress}>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">회의 제목</h4>
-            <form className="mb-3" onSubmit={(e) => e.preventDefault()}>
+            <form className="mb-3">
               <input
+                ref={inputRef}
                 className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base"
                 value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
+                onChange={(e) => {
+                  setNoteTitle(e.target.value);
+                  if (e.target.value.trim()) {
+                    setErrorMessage(""); // 입력할 때 에러 메시지를 초기화
+                  }
+                }}
               />
+              {errorMessage && (
+                <div className="text-pink-300 text-xs mt-1 ml-2">
+                  {errorMessage}
+                </div>
+              )}
             </form>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">폴더</h4>
 
