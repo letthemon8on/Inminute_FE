@@ -5,8 +5,10 @@ import Navbar from "../components/Navbar";
 import NewNoteModal from "../components/modal/NewNoteModal";
 import DropDown from "../components/DropDown";
 import search from "../assets/search.svg";
+import { useFolderContext } from "../context/FolderContext";
 
 const List: React.FC = () => {
+  const { notes } = useFolderContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
 
   const options = [
@@ -41,15 +43,9 @@ const List: React.FC = () => {
             <NewNoteModal />
           </div>
           <section>
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
-            <NoteListItem />
+            {notes.map((note) => (
+              <NoteListItem key={note.id} note={note} />
+            ))}
           </section>
         </div>
       </div>

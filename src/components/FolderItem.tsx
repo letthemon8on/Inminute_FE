@@ -6,19 +6,17 @@ import chevron_up from "./../assets/chevron/chevron_up.svg";
 import chevron_down from "./../assets/chevron/chevron_down.svg";
 import { INote } from "./../data/dummyData"; // 인터페이스를 가져옴
 
-interface Folder {
-  id: number;
-  name: string;
-}
-
 interface FolderItemProps {
-  folder: Folder;
+  folder: {
+    id: number;
+    name: string;
+  };
   notes: INote[];
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
-  const nav = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
+  const nav = useNavigate();
 
   const toggleVisibility = () => {
     setIsOpen(!isOpen);
@@ -38,11 +36,11 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
         />
       </h3>
       {isOpen && (
-        <ul className="ml-6 mt-1 mb-3" onClick={() => nav("/note/:id")}>
+        <ul className="ml-6 mt-1 mb-3">
           {folderNotes.map((note) => (
             <Li key={note.id} onClick={() => nav(`/note/${note.id}`)}>
               <span>{note.date} </span>
-              <span className="pt-light">{note.name}</span>
+              <span className="pt-light">{note.title}</span>
             </Li>
           ))}
         </ul>

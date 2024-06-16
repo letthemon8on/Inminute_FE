@@ -5,15 +5,17 @@ import note from "./../../assets/note.svg";
 import plus from "./../../assets/plus.svg";
 import x from "./../../assets/x.svg";
 import DropDown from "../DropDown";
-// import { initialFolders } from "./../../data/dummyData";
 import { useFolderContext } from "../../context/FolderContext";
+import { useNavigate } from "react-router-dom";
 
 const NewNoteModal: React.FC = () => {
-  const { folders } = useFolderContext();
+  const { folders, addNote } = useFolderContext();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number>(
     folders.length > 0 ? folders[0].id : 0
   );
+  const [noteTitle, setNoteTitle] = useState<string>("");
+  const navigate = useNavigate();
 
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
@@ -23,6 +25,13 @@ const NewNoteModal: React.FC = () => {
     value: folder.id,
     label: folder.name,
   }));
+
+  const handleCreateNote = () => {
+    if (noteTitle.trim() && selectedOption) {
+      const newNote = addNote(noteTitle, selectedOption);
+      navigate(`/note/${newNote.id}`);
+    }
+  };
 
   return (
     <section>
@@ -38,8 +47,12 @@ const NewNoteModal: React.FC = () => {
           <div className="mt-4 text-3xl text-gray-500">New Note</div>
           <section className="w-72 mt-8">
             <h4 className="ml-2 mb-1 text-sm text-gray-400">회의 제목</h4>
-            <form className="mb-3">
-              <input className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base" />
+            <form className="mb-3" onSubmit={(e) => e.preventDefault()}>
+              <input
+                className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base"
+                value={noteTitle}
+                onChange={(e) => setNoteTitle(e.target.value)}
+              />
             </form>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">폴더</h4>
 
@@ -54,7 +67,10 @@ const NewNoteModal: React.FC = () => {
             />
           </section>
           <div className="flex mt-10 mb-16">
-            <button className="border border-gray-200 text-gray-500 w-72 h-9 bg-main-pink/[.3] rounded-xl py-1 mx-4">
+            <button
+              className="border border-gray-200 text-gray-500 w-72 h-9 bg-main-pink/[.3] rounded-xl py-1 mx-4"
+              onClick={handleCreateNote}
+            >
               회의록 생성
             </button>
           </div>
