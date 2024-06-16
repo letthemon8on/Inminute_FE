@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Folder from "../components/Folder";
 import NoteListItem from "../components/NoteListItem";
 import Navbar from "../components/Navbar";
@@ -15,6 +15,28 @@ const List: React.FC = () => {
     { value: 0, label: "최신순" },
     { value: 1, label: "오래된 순" },
   ];
+
+  const sortedNotes = useMemo(() => {
+    const sorted = [...notes].sort((a, b) => {
+      const dateA = new Date(
+        `20${a.date.slice(0, 2)}-${a.date.slice(2, 4)}-${a.date.slice(4, 6)}T${
+          a.time
+        }`
+      );
+      const dateB = new Date(
+        `20${b.date.slice(0, 2)}-${b.date.slice(2, 4)}-${b.date.slice(4, 6)}T${
+          b.time
+        }`
+      );
+
+      if (selectedOption === 0) {
+        return dateB.getTime() - dateA.getTime(); // 최신순
+      } else {
+        return dateA.getTime() - dateB.getTime(); // 오래된 순
+      }
+    });
+    return sorted;
+  }, [notes, selectedOption]);
 
   return (
     <div className="bg-bg-blue">
@@ -43,7 +65,7 @@ const List: React.FC = () => {
             <NewNoteModal />
           </div>
           <section>
-            {notes.map((note) => (
+            {sortedNotes.map((note) => (
               <NoteListItem key={note.id} note={note} />
             ))}
           </section>
