@@ -4,21 +4,30 @@ import Navbar from "../components/Navbar";
 import Script from "../components/note/Script";
 import SummaryBySpk from "../components/note/SummaryBySpk";
 import ToDoBySpk from "../components/note/ToDoBySpk";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
 import zoom from "./../assets/zoom.svg";
+import { useFolderContext } from "../context/FolderContext";
 
 const Note: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("Script");
+  const { id } = useParams<{ id: string }>();
+  const { notes } = useFolderContext();
+  const noteId = parseInt(id || "", 10);
+  const note = notes.find((note) => note.id === noteId);
 
+  const [activeTab, setActiveTab] = useState<string>("Script");
   const nav = useNavigate();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
+
+  if (!note) {
+    return <div>Note not found</div>;
+  }
 
   return (
     <div className="bg-bg-blue">
@@ -28,7 +37,7 @@ const Note: React.FC = () => {
         <section className="bg-white grow px-12">
           <div className="flex justify-between mt-4">
             <div
-              onClick={() => nav(-1)}
+              onClick={() => nav("/list")}
               className="text-2xl text-gray-400 cursor-pointer"
             >
               &lt;
@@ -36,17 +45,19 @@ const Note: React.FC = () => {
             <div className="flex items-center text-gray-500">
               <span className="mr-4 flex items-center">
                 <img className="w-5 mx-1" src={calendar} />
-                <span>240405 Fri</span>
+                <span>
+                  {note.date} {note.day}
+                </span>
               </span>
               <span className="mr-2 flex items-center">
                 <img className="w-5 mx-1" src={clock} />
-                <span>10:35</span>
+                <span>{note.time}</span>
               </span>
             </div>
           </div>
           <div className="flex justify-between">
             <div className="flex">
-              <h2 className="text-4xl my-3 mr-4">프로젝트 이름</h2>
+              <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
               <div className="flex items-center">
                 <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
                   <img src={pencil} />

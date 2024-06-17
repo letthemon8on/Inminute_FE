@@ -1,28 +1,57 @@
 import "./../../styles/fonts/font.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 import note from "./../../assets/note.svg";
 import plus from "./../../assets/plus.svg";
 import x from "./../../assets/x.svg";
 import DropDown from "../DropDown";
-// import { initialFolders } from "./../../data/dummyData";
 import { useFolderContext } from "../../context/FolderContext";
+import { useNavigate } from "react-router-dom";
 
 const NewNoteModal: React.FC = () => {
-  const { folders } = useFolderContext();
+  const { folders, addNote } = useFolderContext();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number>(
     folders.length > 0 ? folders[0].id : 0
   );
+  const [noteTitle, setNoteTitle] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
 
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
+    setErrorMessage("");
   }, [isOpenModal]);
 
   const options = folders.map((folder) => ({
     value: folder.id,
     label: folder.name,
   }));
+
+  useEffect(() => {
+    if (isOpenModal && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpenModal]);
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleCreateNote();
+    }
+  };
+
+  const handleCreateNote = () => {
+    if (noteTitle.trim() && selectedOption) {
+      const newNote = addNote(noteTitle, selectedOption);
+      setNoteTitle("");
+      setOpenModal(false);
+      nav(`/note/${newNote.id}`);
+    } else {
+      setErrorMessage("회의 제목을 입력해주세요.");
+    }
+  };
 
   return (
     <section>
@@ -36,10 +65,25 @@ const NewNoteModal: React.FC = () => {
           </div>
           <img className="w-14 mt-16" src="/favicon.svg" />
           <div className="mt-4 text-3xl text-gray-500">New Note</div>
-          <section className="w-72 mt-8">
+          <section className="w-72 mt-8" onKeyDown={handleKeyPress}>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">회의 제목</h4>
             <form className="mb-3">
-              <input className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base" />
+              <input
+                ref={inputRef}
+                className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base"
+                value={noteTitle}
+                onChange={(e) => {
+                  setNoteTitle(e.target.value);
+                  if (e.target.value.trim()) {
+                    setErrorMessage(""); // 입력할 때 에러 메시지를 초기화
+                  }
+                }}
+              />
+              {errorMessage && (
+                <div className="text-pink-300 text-xs mt-1 ml-2">
+                  {errorMessage}
+                </div>
+              )}
             </form>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">폴더</h4>
 
@@ -54,7 +98,10 @@ const NewNoteModal: React.FC = () => {
             />
           </section>
           <div className="flex mt-10 mb-16">
-            <button className="border border-gray-200 text-gray-500 w-72 h-9 bg-main-pink/[.3] rounded-xl py-1 mx-4">
+            <button
+              className="border border-gray-200 text-gray-500 w-72 h-9 bg-main-pink/[.3] rounded-xl py-1 mx-4"
+              onClick={handleCreateNote}
+            >
               회의록 생성
             </button>
           </div>

@@ -7,12 +7,11 @@ import minus from "./../assets/minus.svg";
 import { useFolderContext } from "./../context/FolderContext";
 
 const Folder: React.FC = () => {
+  const { folders, notes, addFolder } = useFolderContext(); // Context 사용
   const [newFolder, setNewFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
-  const { folders, notes, addFolder } = useFolderContext(); // Context 사용
-
-  const nav = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
 
   useEffect(() => {
     if (newFolder && inputRef.current) {
@@ -26,6 +25,7 @@ const Folder: React.FC = () => {
 
   const handleCancelNewFolderClick = () => {
     setNewFolder(false);
+    setFolderName("");
   };
 
   const handleAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
