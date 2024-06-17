@@ -41,7 +41,7 @@ const Folder: React.FC = () => {
       <div className="pl-10">
         {!newFolder && (
           <button
-            className="bg-gradient-to-r from-yellow-50 to-cyan-50 rounded-2xl w-32 h-11 mb-4 drop-shadow-lg text-gray-500 text-xl"
+            className="hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-yellow-50 to-cyan-50 rounded-2xl w-32 h-11 mb-4 drop-shadow-lg text-gray-500 text-xl"
             onClick={handleNewFolderClick}
           >
             <div className="flex justify-between mx-4">
@@ -52,7 +52,7 @@ const Folder: React.FC = () => {
         )}
         <div className={newFolder ? "block" : "hidden"}>
           <button
-            className="bg-gradient-to-r from-yellow-50 to-cyan-50 rounded-2xl w-32 h-11 mb-4 drop-shadow-lg text-gray-500 text-xl"
+            className="hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-yellow-50 to-cyan-50 rounded-2xl w-32 h-11 mb-4 drop-shadow-lg text-gray-500 text-xl"
             onClick={handleCancelNewFolderClick}
           >
             <div className="flex justify-between mx-4">
@@ -75,7 +75,7 @@ const Folder: React.FC = () => {
         </div>
         <h3
           onClick={() => nav("/list")}
-          className="pt-1 text-lg flex items-center cursor-pointer"
+          className="hover:bg-gray-200 rounded-md mt-1 text-lg flex items-center cursor-pointer"
         >
           <img className="w-5 ml-2 mr-1" src={folderIcon} />
           전체 폴더
