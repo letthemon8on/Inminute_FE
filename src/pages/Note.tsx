@@ -1,27 +1,57 @@
-import React, { useState } from "react";
-import Folder from "../components/Folder";
-import Navbar from "../components/Navbar";
-import Script from "../components/note/Script";
-import SummaryBySpk from "../components/note/SummaryBySpk";
-import ToDoBySpk from "../components/note/ToDoBySpk";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
 import zoom from "./../assets/zoom.svg";
+import Folder from "../components/Folder";
+import Navbar from "../components/Navbar";
+import Script from "../components/note/Script";
+import SummaryBySpk from "../components/note/SummaryBySpk";
+import ToDoBySpk from "../components/note/ToDoBySpk";
 import { useAppContext } from "../context/AppContext";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { notes } = useAppContext();
+  const { notes, updateNoteTitle } = useAppContext();
   const noteId = parseInt(id || "", 10);
   const note = notes.find((note) => note.id === noteId);
   const [activeTab, setActiveTab] = useState<string>("Script");
+  const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+  const [newTitle, setNewTitle] = useState<string>(note ? note.title : "");
+  const inputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
+
+  useEffect(() => {
+    if (isEditingTitle && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditingTitle]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
+  };
+
+  const handleEditTitle = () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTitle(e.target.value);
+  };
+
+  const handleSaveTitle = () => {
+    if (note && newTitle.trim()) {
+      updateNoteTitle(note.id, newTitle.trim());
+      setIsEditingTitle(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSaveTitle();
+    }
   };
 
   if (!note) {
@@ -56,9 +86,23 @@ const Note: React.FC = () => {
           </div>
           <div className="flex justify-between">
             <div className="flex">
-              <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
+              {isEditingTitle ? (
+                <input
+                  className="text-4xl my-3 mr-4 rounded"
+                  value={newTitle}
+                  onChange={handleChangeTitle}
+                  onBlur={handleSaveTitle}
+                  onKeyDown={handleKeyDown}
+                  ref={inputRef}
+                />
+              ) : (
+                <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
+              )}
               <div className="flex items-center">
-                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                <button
+                  onClick={handleEditTitle}
+                  className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125"
+                >
                   <img src={pencil} />
                 </button>
                 <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">

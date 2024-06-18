@@ -13,6 +13,7 @@ interface AppContextType {
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, title: string) => INote;
+  updateNoteTitle: (id: number, newTitle: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -92,9 +93,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     return newNote;
   };
 
+  const updateNoteTitle = (id: number, newTitle: string) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === id ? { ...note, title: newTitle } : note
+      )
+    );
+  };
+
   return (
     <AppContext.Provider
-      value={{ folders, notes, addFolder, updateFolder, deleteFolder, addNote }}
+      value={{
+        folders,
+        notes,
+        addFolder,
+        updateFolder,
+        deleteFolder,
+        addNote,
+        updateNoteTitle,
+      }}
     >
       {children}
     </AppContext.Provider>
