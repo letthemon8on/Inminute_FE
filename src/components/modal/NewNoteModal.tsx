@@ -44,7 +44,7 @@ const NewNoteModal: React.FC = () => {
 
   const handleCreateNote = () => {
     if (noteTitle.trim() && selectedOption) {
-      const newNote = addNote(noteTitle, selectedOption);
+      const newNote = addNote(selectedOption, noteTitle);
       setNoteTitle("");
       setOpenModal(false);
       nav(`/note/${newNote.id}`);
@@ -109,7 +109,7 @@ const NewNoteModal: React.FC = () => {
       )}
       <button
         onClick={onClickToggleModal}
-        className="bg-gradient-to-r from-cyan-50 to-pink-50 rounded-2xl w-32 h-11 drop-shadow-lg text-gray-500 text-xl"
+        className="hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-cyan-50 to-pink-50 rounded-2xl w-32 h-11 drop-shadow-lg text-gray-500 text-xl"
       >
         <div className="flex justify-between mx-4">
           <span>New</span> <img className="w-6 ml-1" src={note} />

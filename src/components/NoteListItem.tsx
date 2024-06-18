@@ -10,7 +10,7 @@ interface NoteListItemProps {
 
 const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
   return (
-    <div className="h-24 rounded-xl bg-white mb-4">
+    <div className="hover:bg-gray-200 h-24 rounded-xl bg-white mb-4">
       <Link to={`/note/${note.id}`}>
         <div className="flex justify-between items-center">
           <h3 className="mx-10 mt-4 text-2xl pt-medium">{note.title}</h3>
