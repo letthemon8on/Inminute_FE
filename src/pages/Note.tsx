@@ -10,14 +10,13 @@ import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
 import zoom from "./../assets/zoom.svg";
-import { useFolderContext } from "../context/FolderContext";
+import { useAppContext } from "../context/AppContext";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { notes } = useFolderContext();
+  const { notes } = useAppContext();
   const noteId = parseInt(id || "", 10);
   const note = notes.find((note) => note.id === noteId);
-
   const [activeTab, setActiveTab] = useState<string>("Script");
   const nav = useNavigate();
 
@@ -73,13 +72,13 @@ const Note: React.FC = () => {
           <hr />
           <div className="flex py-2">
             <h6 className="text-gray-400 pt-light mx-2">participants</h6>
-            <span className="bg-main-blue/[.5] rounded-xl px-2.5 mx-1">
+            <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               심수연
             </span>
             <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               박상욱
             </span>
-            <span className="bg-yellow-100/[.7] rounded-xl px-2.5 mx-1">
+            <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               노태일
             </span>
           </div>

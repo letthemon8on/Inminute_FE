@@ -4,10 +4,10 @@ import FolderItem from "./FolderItem";
 import folderIcon from "./../assets/folder.svg";
 import plus from "./../assets/plus.svg";
 import minus from "./../assets/minus.svg";
-import { useFolderContext } from "./../context/FolderContext";
+import { useAppContext } from "./../context/AppContext";
 
 const Folder: React.FC = () => {
-  const { folders, notes, addFolder } = useFolderContext(); // Context 사용
+  const { folders, notes, addFolder } = useAppContext();
   const [newFolder, setNewFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);

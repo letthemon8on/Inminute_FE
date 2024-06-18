@@ -4,9 +4,9 @@ import {
   INote,
   initialFolders,
   initialNotes,
-} from "./../data/dummyData";
+} from "../data/dummyData";
 
-interface FolderContextType {
+interface AppContextType {
   folders: IFolder[];
   notes: INote[];
   addFolder: (name: string) => void;
@@ -15,17 +15,17 @@ interface FolderContextType {
   addNote: (folderId: number, title: string) => INote;
 }
 
-const FolderContext = createContext<FolderContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const useFolderContext = () => {
-  const context = useContext(FolderContext);
+export const useAppContext = () => {
+  const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useFolderContext must be used within a FolderProvider");
+    throw new Error("useAppContext must be used within an AppProvider");
   }
   return context;
 };
 
-export const FolderProvider: React.FC<{ children: ReactNode }> = ({
+export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [folders, setFolders] = useState<IFolder[]>(initialFolders);
@@ -48,7 +48,9 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const deleteFolder = (id: number) => {
-    setFolders((prevFolders) => prevFolders.filter((folder) => folder.id !== id));
+    setFolders((prevFolders) =>
+      prevFolders.filter((folder) => folder.id !== id)
+    );
     setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
   };
 
@@ -80,6 +82,10 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
       day: formatDay(now),
       title,
       folderId,
+      oneLineSummary: "",
+      script: [],
+      summary: [],
+      todo: [],
     };
     setNotes([...notes, newNote]);
 
@@ -87,10 +93,10 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <FolderContext.Provider
+    <AppContext.Provider
       value={{ folders, notes, addFolder, updateFolder, deleteFolder, addNote }}
     >
       {children}
-    </FolderContext.Provider>
+    </AppContext.Provider>
   );
 };

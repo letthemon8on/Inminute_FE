@@ -2,7 +2,7 @@ import "./../../styles/fonts/font.css";
 import { useState } from "react";
 import Modal from "./Modal";
 import x from "./../../assets/x.svg";
-import { useFolderContext } from "../../context/FolderContext";
+import { useAppContext } from "../../context/AppContext";
 
 interface DeleteFolderModalProps {
   folderId: number;
@@ -13,7 +13,7 @@ const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
   folderId,
   onClose,
 }) => {
-  const { deleteFolder } = useFolderContext();
+  const { deleteFolder } = useAppContext();
 
   const handleDeleteFolder = () => {
     deleteFolder(folderId);
