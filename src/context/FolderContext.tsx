@@ -11,6 +11,7 @@ interface FolderContextType {
   notes: INote[];
   addFolder: (name: string) => void;
   updateFolder: (id: number, name: string) => void;
+  deleteFolder: (id: number) => void;
   addNote: (folderId: number, title: string) => INote;
 }
 
@@ -44,6 +45,11 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
         folder.id === id ? { ...folder, name } : folder
       )
     );
+  };
+
+  const deleteFolder = (id: number) => {
+    setFolders((prevFolders) => prevFolders.filter((folder) => folder.id !== id));
+    setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
   };
 
   const formatDate = (date: Date) => {
@@ -82,7 +88,7 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <FolderContext.Provider
-      value={{ folders, notes, addFolder, updateFolder, addNote }}
+      value={{ folders, notes, addFolder, updateFolder, deleteFolder, addNote }}
     >
       {children}
     </FolderContext.Provider>

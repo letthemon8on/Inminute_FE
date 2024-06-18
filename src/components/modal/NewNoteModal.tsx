@@ -44,7 +44,7 @@ const NewNoteModal: React.FC = () => {
 
   const handleCreateNote = () => {
     if (noteTitle.trim() && selectedOption) {
-      const newNote = addNote(noteTitle, selectedOption);
+      const newNote = addNote(selectedOption, noteTitle);
       setNoteTitle("");
       setOpenModal(false);
       nav(`/note/${newNote.id}`);
