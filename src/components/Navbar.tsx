@@ -67,4 +67,8 @@ const List = styled.li`
   &.active {
     color: #eaa1e3; // 활성화된 리스트 항목의 색상을 핑크로 변경
   }
+
+  &:hover {
+    color: #f0c5ee;
+  }
 `;
