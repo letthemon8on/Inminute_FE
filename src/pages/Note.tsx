@@ -167,7 +167,7 @@ const Note: React.FC = () => {
             <div className="flex flex-col items-center">
               {isEditingOneLine ? (
                 <input
-                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-500"
+                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-600"
                   value={newOneLine}
                   onChange={handleChangeOneLine}
                   onBlur={handleSaveOneLine}
@@ -176,7 +176,7 @@ const Note: React.FC = () => {
                 />
               ) : (
                 <input
-                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-600"
+                  className="hover:bg-gray-100 w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-black"
                   value={note.oneLineSummary}
                   onClick={handleEditOneLine}
                   readOnly

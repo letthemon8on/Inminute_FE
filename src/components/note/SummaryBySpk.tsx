@@ -16,7 +16,7 @@ const SummaryBySpk: React.FC = () => {
   return (
     <div>
       {note.summary.map((item, index) => (
-        <SummaryBySpkItem key={index} item={item} />
+        <SummaryBySpkItem key={index} noteId={noteId} item={item} />
       ))}
     </div>
   );

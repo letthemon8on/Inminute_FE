@@ -1,5 +1,4 @@
 import "./../../styles/fonts/font.css";
-import { useState } from "react";
 import Modal from "./Modal";
 import x from "./../../assets/x.svg";
 import { useAppContext } from "../../context/AppContext";

@@ -15,6 +15,12 @@ interface AppContextType {
   addNote: (folderId: number, title: string) => INote;
   updateNoteTitle: (id: number, newTitle: string) => void;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
+  updateScriptItem: (noteId: number, id: number, content: string) => void;
+  deleteScriptItem: (noteId: number, id: number) => void;
+  updateSummaryBySpkItem: (noteId: number, id: number, content: string) => void;
+  deleteSummaryBySpkItem: (noteId: number, id: number) => void;
+  updateToDoBySpkItem: (noteId: number, id: number, content: string) => void;
+  deleteToDoBySpkItem: (noteId: number, id: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -110,6 +116,98 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
+  const updateScriptItem = (noteId: number, id: number, content: string) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              script: note.script.map((item) =>
+                item.id === id ? { ...item, content } : item
+              ),
+            }
+          : note
+      )
+    );
+  };
+
+  const deleteScriptItem = (noteId: number, id: number) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              script: note.script.filter((item) => item.id !== id),
+            }
+          : note
+      )
+    );
+  };
+
+  const updateSummaryBySpkItem = (
+    noteId: number,
+    id: number,
+    content: string
+  ) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              summary: note.summary.map((item) =>
+                item.id === id ? { ...item, content } : item
+              ),
+            }
+          : note
+      )
+    );
+  };
+
+  const deleteSummaryBySpkItem = (noteId: number, id: number) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              summary: note.summary.filter((item) => item.id !== id),
+            }
+          : note
+      )
+    );
+  };
+
+  const updateToDoBySpkItem = (
+    noteId: number,
+    itemId: number,
+    content: string
+  ) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              todo: note.todo.map((item) =>
+                item.id === itemId ? { ...item, content } : item
+              ),
+            }
+          : note
+      )
+    );
+  };
+
+  const deleteToDoBySpkItem = (noteId: number, itemId: number) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              todo: note.todo.filter((item) => item.id !== itemId),
+            }
+          : note
+      )
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -121,6 +219,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         addNote,
         updateNoteTitle,
         updateNoteOneLine,
+        updateScriptItem,
+        deleteScriptItem,
+        updateSummaryBySpkItem,
+        deleteSummaryBySpkItem,
+        updateToDoBySpkItem,
+        deleteToDoBySpkItem,
       }}
     >
       {children}

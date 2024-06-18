@@ -16,7 +16,7 @@ const ToDoBySpk: React.FC = () => {
   return (
     <div>
       {note.todo.map((item, index) => (
-        <ToDoBySpkItem key={index} item={item} />
+        <ToDoBySpkItem key={index} noteId={noteId} item={item} />
       ))}
     </div>
   );

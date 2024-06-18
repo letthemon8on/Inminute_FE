@@ -16,7 +16,7 @@ const Script: React.FC = () => {
   return (
     <section>
       {note.script.map((item, index) => (
-        <ScriptItem key={index} item={item} />
+        <ScriptItem key={index} noteId={noteId} item={item} />
       ))}
     </section>
   );
