@@ -11,12 +11,14 @@ import Script from "../components/note/Script";
 import SummaryBySpk from "../components/note/SummaryBySpk";
 import ToDoBySpk from "../components/note/ToDoBySpk";
 import { useAppContext } from "../context/AppContext";
+import DeleteNoteModal from "../components/modal/DeleteNoteModal";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { notes, updateNoteTitle, updateNoteOneLine } = useAppContext();
   const noteId = parseInt(id || "", 10);
   const note = notes.find((note) => note.id === noteId);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(note ? note.title : "");
@@ -92,6 +94,12 @@ const Note: React.FC = () => {
     }
   };
 
+  // delete note
+
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
   if (!note) {
     return <div>Note not found</div>;
   }
@@ -143,7 +151,10 @@ const Note: React.FC = () => {
                 >
                   <img src={pencil} />
                 </button>
-                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                <button
+                  onClick={handleOpenDeleteModal}
+                  className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125"
+                >
                   <img src={trash} />
                 </button>
               </div>
@@ -226,6 +237,12 @@ const Note: React.FC = () => {
           </div>
         </section>
       </div>
+      {isDeleteModalOpen && (
+        <DeleteNoteModal
+          id={note.id}
+          onClose={() => setIsDeleteModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

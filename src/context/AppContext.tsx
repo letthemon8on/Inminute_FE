@@ -13,6 +13,7 @@ interface AppContextType {
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, title: string) => INote;
+  deleteNote: (folderId: number) => void;
   updateNoteTitle: (id: number, newTitle: string) => void;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
   updateScriptItem: (noteId: number, id: number, content: string) => void;
@@ -98,6 +99,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     setNotes([...notes, newNote]);
 
     return newNote;
+  };
+
+  const deleteNote = (id: number) => {
+    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
   };
 
   const updateNoteTitle = (id: number, newTitle: string) => {
@@ -217,6 +222,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         updateFolder,
         deleteFolder,
         addNote,
+        deleteNote,
         updateNoteTitle,
         updateNoteOneLine,
         updateScriptItem,
