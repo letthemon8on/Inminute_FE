@@ -5,10 +5,10 @@ import Navbar from "../components/Navbar";
 import NewNoteModal from "../components/modal/NewNoteModal";
 import DropDown from "../components/DropDown";
 import search from "../assets/search.svg";
-import { useFolderContext } from "../context/FolderContext";
+import { useAppContext } from "../context/AppContext";
 
 const List: React.FC = () => {
-  const { notes } = useFolderContext();
+  const { notes } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
 
   const options = [

@@ -1,28 +1,103 @@
-import React, { useState } from "react";
-import Folder from "../components/Folder";
-import Navbar from "../components/Navbar";
-import Script from "../components/note/Script";
-import SummaryBySpk from "../components/note/SummaryBySpk";
-import ToDoBySpk from "../components/note/ToDoBySpk";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
 import zoom from "./../assets/zoom.svg";
-import { useFolderContext } from "../context/FolderContext";
+import Folder from "../components/Folder";
+import Navbar from "../components/Navbar";
+import Script from "../components/note/Script";
+import SummaryBySpk from "../components/note/SummaryBySpk";
+import ToDoBySpk from "../components/note/ToDoBySpk";
+import { useAppContext } from "../context/AppContext";
+import DeleteNoteModal from "../components/modal/DeleteNoteModal";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { notes } = useFolderContext();
+  const { notes, updateNoteTitle, updateNoteOneLine } = useAppContext();
   const noteId = parseInt(id || "", 10);
   const note = notes.find((note) => note.id === noteId);
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Script");
+  const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+  const [newTitle, setNewTitle] = useState<string>(note ? note.title : "");
+  const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
+  const [newOneLine, setNewOneLine] = useState<string>(
+    note ? note.oneLineSummary : ""
+  );
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const oneLineInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
+
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isEditingTitle]);
+
+  useEffect(() => {
+    if (isEditingOneLine && oneLineInputRef.current) {
+      oneLineInputRef.current.focus();
+    }
+  }, [isEditingOneLine]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
+  };
+
+  // title 수정
+
+  const handleEditTitle = () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTitle(e.target.value);
+  };
+
+  const handleSaveTitle = () => {
+    if (note && newTitle.trim()) {
+      updateNoteTitle(note.id, newTitle.trim());
+      setIsEditingTitle(false);
+    }
+  };
+
+  const handleKeyDownTitle = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSaveTitle();
+      oneLineInputRef.current?.blur();
+    }
+  };
+
+  // oneLineSummary 수정
+
+  const handleEditOneLine = () => {
+    setIsEditingOneLine(true);
+  };
+
+  const handleChangeOneLine = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewOneLine(e.target.value);
+  };
+
+  const handleSaveOneLine = () => {
+    if (note && newOneLine.trim()) {
+      updateNoteOneLine(note.id, newOneLine.trim());
+      setIsEditingOneLine(false);
+    }
+  };
+
+  const handleKeyDownOneLine = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSaveOneLine();
+      oneLineInputRef.current?.blur();
+    }
+  };
+
+  // delete note
+
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
   };
 
   if (!note) {
@@ -57,12 +132,29 @@ const Note: React.FC = () => {
           </div>
           <div className="flex justify-between">
             <div className="flex">
-              <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
+              {isEditingTitle ? (
+                <input
+                  className="text-4xl my-3 mr-4 rounded"
+                  value={newTitle}
+                  onChange={handleChangeTitle}
+                  onBlur={handleSaveTitle}
+                  onKeyDown={handleKeyDownTitle}
+                  ref={titleInputRef}
+                />
+              ) : (
+                <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
+              )}
               <div className="flex items-center">
-                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                <button
+                  onClick={handleEditTitle}
+                  className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125"
+                >
                   <img src={pencil} />
                 </button>
-                <button className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125">
+                <button
+                  onClick={handleOpenDeleteModal}
+                  className="text-xl mx-2 w-6 transition-transform duration-200 hover:scale-125"
+                >
                   <img src={trash} />
                 </button>
               </div>
@@ -73,25 +165,34 @@ const Note: React.FC = () => {
           <hr />
           <div className="flex py-2">
             <h6 className="text-gray-400 pt-light mx-2">participants</h6>
-            <span className="bg-main-blue/[.5] rounded-xl px-2.5 mx-1">
+            <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               심수연
             </span>
             <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               박상욱
-            </span>
-            <span className="bg-yellow-100/[.7] rounded-xl px-2.5 mx-1">
-              노태일
             </span>
           </div>
           <hr />
           <div className="flex flex-col mx-3">
             <div className="pt-medium text-lg mt-3 mb-2">One Line Summary</div>
             <div className="flex flex-col items-center">
-              <input
-                className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-"
-                value="프로젝트 이름을 인미닛으로 정하였다"
-                disabled
-              />
+              {isEditingOneLine ? (
+                <input
+                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-600"
+                  value={newOneLine}
+                  onChange={handleChangeOneLine}
+                  onBlur={handleSaveOneLine}
+                  onKeyDown={handleKeyDownOneLine}
+                  ref={oneLineInputRef}
+                />
+              ) : (
+                <input
+                  className="hover:bg-gray-100 w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-black"
+                  value={note.oneLineSummary}
+                  onClick={handleEditOneLine}
+                  readOnly
+                />
+              )}
             </div>
 
             <section>
@@ -136,6 +237,12 @@ const Note: React.FC = () => {
           </div>
         </section>
       </div>
+      {isDeleteModalOpen && (
+        <DeleteNoteModal
+          id={note.id}
+          onClose={() => setIsDeleteModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

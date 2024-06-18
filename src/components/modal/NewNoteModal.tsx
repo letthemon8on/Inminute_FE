@@ -5,11 +5,11 @@ import note from "./../../assets/note.svg";
 import plus from "./../../assets/plus.svg";
 import x from "./../../assets/x.svg";
 import DropDown from "../DropDown";
-import { useFolderContext } from "../../context/FolderContext";
+import { useAppContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 
 const NewNoteModal: React.FC = () => {
-  const { folders, addNote } = useFolderContext();
+  const { folders, addNote } = useAppContext();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number>(
     folders.length > 0 ? folders[0].id : 0

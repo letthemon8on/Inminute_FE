@@ -8,7 +8,7 @@ import ellipsis from "./../assets/ellipsis_horizontal.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
 import { INote } from "./../data/dummyData";
-import { useFolderContext } from "./../context/FolderContext";
+import { useAppContext } from "./../context/AppContext";
 import DeleteFolderModal from "./modal/DeleteFolderModal";
 
 interface FolderItemProps {
@@ -20,7 +20,7 @@ interface FolderItemProps {
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
-  const { updateFolder } = useFolderContext();
+  const { updateFolder } = useAppContext();
   const [isFolderOpen, setIsFolderOpen] = useState(true);
   const [isHover, setIsHover] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
