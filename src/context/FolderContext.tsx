@@ -9,7 +9,8 @@ import {
 interface FolderContextType {
   folders: IFolder[];
   notes: INote[];
-  addFolder: (id: number | null, name: string) => void;
+  addFolder: (name: string) => void;
+  updateFolder: (id: number, name: string) => void;
   addNote: (folderId: number, title: string) => INote;
 }
 
@@ -29,20 +30,20 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
   const [folders, setFolders] = useState<IFolder[]>(initialFolders);
   const [notes, setNotes] = useState<INote[]>(initialNotes);
 
-  const addFolder = (id: number | null, name: string) => {
-    if (id === null) {
-      const newFolder = {
-        id: folders.length + 1,
-        name,
-      };
-      setFolders([...folders, newFolder]);
-    } else {
-      setFolders((prevFolders) =>
-        prevFolders.map((folder) =>
-          folder.id === id ? { ...folder, name } : folder
-        )
-      );
-    }
+  const addFolder = (name: string) => {
+    const newFolder = {
+      id: folders.length + 1,
+      name,
+    };
+    setFolders([...folders, newFolder]);
+  };
+
+  const updateFolder = (id: number, name: string) => {
+    setFolders((prevFolders) =>
+      prevFolders.map((folder) =>
+        folder.id === id ? { ...folder, name } : folder
+      )
+    );
   };
 
   const formatDate = (date: Date) => {
@@ -80,7 +81,9 @@ export const FolderProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <FolderContext.Provider value={{ folders, notes, addFolder, addNote }}>
+    <FolderContext.Provider
+      value={{ folders, notes, addFolder, updateFolder, addNote }}
+    >
       {children}
     </FolderContext.Provider>
   );

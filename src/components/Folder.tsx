@@ -30,7 +30,7 @@ const Folder: React.FC = () => {
 
   const handleAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && folderName.trim()) {
-      addFolder(null, folderName.trim());
+      addFolder(folderName.trim());
       setFolderName("");
       setNewFolder(false);
     }

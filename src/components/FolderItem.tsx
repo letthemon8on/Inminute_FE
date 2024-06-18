@@ -19,7 +19,7 @@ interface FolderItemProps {
 }
 
 const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
-  const { addFolder } = useFolderContext();
+  const { updateFolder } = useFolderContext();
   const [isFolderOpen, setIsFolderOpen] = useState(true);
   const [isHover, setIsHover] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +48,7 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
   };
 
   const handleSaveRename = () => {
-    addFolder(folder.id, newFolderName); // 폴더 이름 업데이트
+    updateFolder(folder.id, newFolderName); // 폴더 이름 업데이트
     setIsEditing(false);
   };
 
