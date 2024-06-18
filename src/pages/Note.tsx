@@ -14,24 +14,37 @@ import { useAppContext } from "../context/AppContext";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { notes, updateNoteTitle } = useAppContext();
+  const { notes, updateNoteTitle, updateNoteOneLine } = useAppContext();
   const noteId = parseInt(id || "", 10);
   const note = notes.find((note) => note.id === noteId);
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(note ? note.title : "");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
+  const [newOneLine, setNewOneLine] = useState<string>(
+    note ? note.oneLineSummary : ""
+  );
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const oneLineInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
   useEffect(() => {
-    if (isEditingTitle && inputRef.current) {
-      inputRef.current.focus();
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
     }
   }, [isEditingTitle]);
+
+  useEffect(() => {
+    if (isEditingOneLine && oneLineInputRef.current) {
+      oneLineInputRef.current.focus();
+    }
+  }, [isEditingOneLine]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
+
+  // title 수정
 
   const handleEditTitle = () => {
     setIsEditingTitle(true);
@@ -48,9 +61,34 @@ const Note: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDownTitle = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSaveTitle();
+      oneLineInputRef.current?.blur();
+    }
+  };
+
+  // oneLineSummary 수정
+
+  const handleEditOneLine = () => {
+    setIsEditingOneLine(true);
+  };
+
+  const handleChangeOneLine = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewOneLine(e.target.value);
+  };
+
+  const handleSaveOneLine = () => {
+    if (note && newOneLine.trim()) {
+      updateNoteOneLine(note.id, newOneLine.trim());
+      setIsEditingOneLine(false);
+    }
+  };
+
+  const handleKeyDownOneLine = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSaveOneLine();
+      oneLineInputRef.current?.blur();
     }
   };
 
@@ -92,8 +130,8 @@ const Note: React.FC = () => {
                   value={newTitle}
                   onChange={handleChangeTitle}
                   onBlur={handleSaveTitle}
-                  onKeyDown={handleKeyDown}
-                  ref={inputRef}
+                  onKeyDown={handleKeyDownTitle}
+                  ref={titleInputRef}
                 />
               ) : (
                 <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
@@ -122,19 +160,28 @@ const Note: React.FC = () => {
             <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               박상욱
             </span>
-            <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
-              노태일
-            </span>
           </div>
           <hr />
           <div className="flex flex-col mx-3">
             <div className="pt-medium text-lg mt-3 mb-2">One Line Summary</div>
             <div className="flex flex-col items-center">
-              <input
-                className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-"
-                value={note.oneLineSummary}
-                disabled
-              />
+              {isEditingOneLine ? (
+                <input
+                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-500"
+                  value={newOneLine}
+                  onChange={handleChangeOneLine}
+                  onBlur={handleSaveOneLine}
+                  onKeyDown={handleKeyDownOneLine}
+                  ref={oneLineInputRef}
+                />
+              ) : (
+                <input
+                  className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-600"
+                  value={note.oneLineSummary}
+                  onClick={handleEditOneLine}
+                  readOnly
+                />
+              )}
             </div>
 
             <section>
