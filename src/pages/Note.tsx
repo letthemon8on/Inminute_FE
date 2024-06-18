@@ -88,7 +88,7 @@ const Note: React.FC = () => {
             <div className="flex flex-col items-center">
               <input
                 className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-"
-                value="프로젝트 이름을 인미닛으로 정하였다"
+                value={note.oneLineSummary}
                 disabled
               />
             </div>

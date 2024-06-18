@@ -58,7 +58,7 @@ export const initialNotes: INote[] = [
   {
     id: 2,
     date: "240507",
-    time: "09:00",
+    time: "11:30",
     day: "Fri",
     title: "flow 회의",
     folderId: 1,
@@ -73,7 +73,7 @@ export const initialNotes: INote[] = [
   {
     id: 3,
     date: "240603",
-    time: "09:00",
+    time: "18:20",
     day: "Fri",
     title: "업무 역할 분배",
     folderId: 2,

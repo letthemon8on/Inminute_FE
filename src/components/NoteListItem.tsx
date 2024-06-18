@@ -14,14 +14,14 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
       <Link to={`/note/${note.id}`}>
         <div className="flex justify-between items-center">
           <h3 className="mx-10 mt-4 text-2xl pt-medium">{note.title}</h3>
-          <div className="text-gray-500 mt-4 mr-4 flex">
-            <span className="mr-4 flex items-center">
+          <div className="text-gray-500 w-52 mt-4 mr-4 flex">
+            <span className="w-32 flex items-center">
               <img className="w-5 mx-1" src={calendar} />
               <span>
                 {note.date} {note.day}
               </span>
             </span>
-            <span className="mr-4 flex items-center">
+            <span className="w-20 flex items-center">
               <img className="w-5 mx-1" src={clock} />
               <span>{note.time}</span>
             </span>
@@ -29,7 +29,7 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
         </div>
 
         <p className="text-gray-500 text-base mx-11 my-2">
-          프로젝트 이름이 인미닛으로 결정되었다. (한 줄 요약된 내용)
+          {note.oneLineSummary}
         </p>
       </Link>
     </div>

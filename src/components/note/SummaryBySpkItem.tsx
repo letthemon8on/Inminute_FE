@@ -1,10 +1,19 @@
-import "./../../styles/fonts/font.css";
+import React from "react";
+import { ISummaryItem } from "../../data/dummyData";
 
-export default function SummaryBySpkItem() {
+interface SummaryBySpkItemProps {
+  item: ISummaryItem;
+}
+
+const SummaryBySpkItem: React.FC<SummaryBySpkItemProps> = ({ item }) => {
   return (
     <div className="flex mb-3">
-      <div className="bg-main-blue/[.7] rounded-xl px-2.5 mx-1">심수연</div>
-      <span>인미닛이 좋다고 생각한다</span>
+      <div className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
+        {item.speaker}
+      </div>
+      <span>{item.content}</span>
     </div>
   );
-}
+};
+
+export default SummaryBySpkItem;

@@ -1,10 +1,19 @@
-import "./../../styles/fonts/font.css";
+import React from "react";
+import { IScriptItem } from "../../data/dummyData";
 
-export default function ScriptItem() {
+interface ScriptItemProps {
+  item: IScriptItem;
+}
+
+const ScriptItem: React.FC<ScriptItemProps> = ({ item }) => {
   return (
     <div className="flex mb-3">
-      <div className="bg-main-blue/[.5] rounded-xl px-2.5 mx-1">심수연</div>
-      <span>오늘 회의 안건은 프로젝트의 이름 정하기입니다</span>
+      <div className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
+        {item.speaker}
+      </div>
+      <span>{item.content}</span>
     </div>
   );
-}
+};
+
+export default ScriptItem;
