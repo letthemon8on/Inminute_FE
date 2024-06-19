@@ -14,6 +14,18 @@ export default function LoginModal() {
     setOpenModal(!isOpenModal);
   }, [isOpenModal]);
 
+  const onKakaoLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+  };
+
+  const onNaverLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/naver";
+  };
+
+  const onGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
     <section>
       {isOpenModal && (
@@ -28,13 +40,25 @@ export default function LoginModal() {
           <div className="mt-4 text-3xl text-gray-500">Log in</div>
           <div className="flex mt-12">
             <button className="mx-2">
-              <img className="object-fill h-14 w-14" src={kakao} />
+              <img
+                className="object-fill h-14 w-14"
+                onClick={onKakaoLogin}
+                src={kakao}
+              />
             </button>
             <button className="mx-2">
-              <img className="object-fill h-14 w-14" src={naver} />
+              <img
+                className="object-fill h-14 w-14"
+                onClick={onNaverLogin}
+                src={naver}
+              />
             </button>
             <button className="mx-2">
-              <img className="object-fill h-14 w-14" src={google} />
+              <img
+                className="object-fill h-14 w-14"
+                onClick={onGoogleLogin}
+                src={google}
+              />
             </button>
           </div>
           <div className="flex mt-8 mb-16 text-sm text-main-pink/[.7] cursor-pointer underline decoration-solid">
