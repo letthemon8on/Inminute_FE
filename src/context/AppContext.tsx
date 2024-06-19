@@ -98,8 +98,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const fetchFolder = async () => {
     try {
       const response = await axios.get("/folders/all");
-      console.log("API Response:", response.data.result);
-      setFolders(response.data.result.folders || []); // 응답 데이터 로그 출력
+      console.log("API Response:", response.data.result); // 응답 데이터 로그 출력
+      setFolders(response.data.result.folders || []);
     } catch (error) {
       console.error("Error fetching folders:", error);
     }
@@ -129,11 +129,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const deleteFolder = (id: number) => {
-    setFolders((prevFolders) =>
-      prevFolders.filter((folder) => folder.id !== id)
-    );
-    setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
+  const deleteFolder = async (id: number) => {
+    try {
+      const response = await axios.delete(`/folders/${id}`);
+      const deletedFolder = response.data.isSuccess;
+      console.log(deletedFolder); // 성공 로그 출력
+      setFolders((prevFolders) =>
+        prevFolders.filter((folder) => folder.id !== id)
+      );
+      setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
+    } catch (error) {
+      console.error("Error deleting folder:", error);
+    }
   };
 
   const formatDate = (date: Date) => {
