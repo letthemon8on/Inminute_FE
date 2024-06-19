@@ -11,6 +11,7 @@ export interface IFolder {
   id: number;
   name: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface INote {
@@ -97,8 +98,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const fetchFolder = async () => {
     try {
       const response = await axios.get("/folders/all");
-      console.log("API Response:", response.data);
-      setFolders(response.data.result.folders || []);
+      console.log("API Response:", response.data.result);
+      setFolders(response.data.result.folders || []); // 응답 데이터 로그 출력
     } catch (error) {
       console.error("Error fetching folders:", error);
     }
@@ -108,12 +109,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     fetchFolder();
   }, []);
 
-  const updateFolder = (id: number, name: string) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === id ? { ...folder, name } : folder
-      )
-    );
+  const updateFolder = async (id: number, name: string) => {
+    try {
+      const response = await axios.patch(`/folders/${id}`, { name });
+      const updatedFolder = response.data.result;
+      setFolders((prevFolders) =>
+        prevFolders.map((folder) =>
+          folder.id === id
+            ? {
+                ...folder,
+                name,
+                updatedAt: updatedFolder.updatedAt,
+              }
+            : folder
+        )
+      );
+    } catch (error) {
+      console.error("Error updating folder:", error);
+    }
   };
 
   const deleteFolder = (id: number) => {

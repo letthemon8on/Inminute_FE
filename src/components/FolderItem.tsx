@@ -49,8 +49,8 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
     setIsMenuOpen(false);
   };
 
-  const handleSaveRename = () => {
-    updateFolder(folder.id, newFolderName); // 폴더 이름 업데이트
+  const handleSaveRename = async () => {
+    await updateFolder(folder.id, newFolderName); // 폴더 이름 업데이트
     setIsEditing(false);
   };
 
