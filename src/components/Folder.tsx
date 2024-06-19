@@ -6,7 +6,11 @@ import plus from "./../assets/plus.svg";
 import minus from "./../assets/minus.svg";
 import { useAppContext } from "./../context/AppContext";
 
-const Folder: React.FC = () => {
+interface FolderProps {
+  onSelectFolder: (folderId: number) => void;
+}
+
+const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
   const { folders, notes, addFolder } = useAppContext();
   const [newFolder, setNewFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -86,7 +90,12 @@ const Folder: React.FC = () => {
         </h3>
         <div className="pl-4 pt-2">
           {folders.map((folder) => (
-            <FolderItem key={folder.id} folder={folder} notes={notes} />
+            <FolderItem
+              key={folder.id}
+              folder={folder}
+              notes={notes}
+              onSelectFolder={() => onSelectFolder(folder.id)}
+            />
           ))}
         </div>
       </div>

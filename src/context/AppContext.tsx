@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import axios from "../api/axiosConfig";
+import { formatDate, formatDay, formatTime } from "../util/date";
 
 export interface IFolder {
   id: number;
@@ -54,6 +55,7 @@ interface AppContextType {
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, name: string) => Promise<INote | undefined>;
+  fetchNote: (folderId: number) => Promise<INote[]>;
   deleteNote: (folderId: number) => void;
   updateNoteTitle: (id: number, newTitle: string) => void;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
@@ -144,28 +146,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-    const year = String(date.getFullYear()).slice(2);
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}${month}${day}`;
-  };
-
-  const formatTime = (isoString: string) => {
-    const date = new Date(isoString);
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
-  };
-
-  const formatDay = (isoString: string) => {
-    const date = new Date(isoString);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return days[date.getDay()];
-  };
-
   const addNote = async (
     folderId: number,
     name: string
@@ -191,6 +171,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       return newNote;
     } catch (error) {
       console.error("Error creating note:", error);
+    }
+  };
+
+  const fetchNote = async (folderId: number): Promise<INote[]> => {
+    try {
+      const response = await axios.get("/notes", { params: { folderId } });
+      console.log("Note Response:", response.data);
+      setNotes(response.data.result.notes);
+      return response.data.result.notes || [];
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+      return [];
     }
   };
 
@@ -316,6 +308,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         updateFolder,
         deleteFolder,
         addNote,
+        fetchNote,
         deleteNote,
         updateNoteTitle,
         updateNoteOneLine,

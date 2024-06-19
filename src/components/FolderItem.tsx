@@ -10,6 +10,7 @@ import trash from "./../assets/trash.svg";
 import { INote } from "./../context/AppContext";
 import { useAppContext } from "./../context/AppContext";
 import DeleteFolderModal from "./modal/DeleteFolderModal";
+import { formatDate } from "../util/date";
 
 interface FolderItemProps {
   folder: {
@@ -17,11 +18,17 @@ interface FolderItemProps {
     name: string;
   };
   notes: INote[];
+  onSelectFolder: (folderId: number) => void;
 }
 
-const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
-  const { updateFolder } = useAppContext();
-  const [isFolderOpen, setIsFolderOpen] = useState(true);
+const FolderItem: React.FC<FolderItemProps> = ({
+  folder,
+  notes,
+  onSelectFolder,
+}) => {
+  const { updateFolder, fetchNote } = useAppContext();
+  const [isFolderOpen, setIsFolderOpen] = useState(false);
+  const [folderNotes, setFolderNotes] = useState<INote[]>([]);
   const [isHover, setIsHover] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState(folder.name);
@@ -36,8 +43,12 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
     }
   }, [isEditing]);
 
-  const handleFolderToggle = () => {
+  const handleFolderToggle = async () => {
     setIsFolderOpen(!isFolderOpen);
+    if (!isFolderOpen) {
+      const fetchedNotes = await fetchNote(folder.id); // 폴더가 열릴 때 노트 데이터를 가져옴
+      setFolderNotes(fetchedNotes); // 가져온 노트 데이터를 상태에 저장
+    }
   };
 
   const handleMenuToggle = () => {
@@ -65,7 +76,7 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
     }
   };
 
-  const folderNotes = notes.filter((note) => note.folderId === folder.id);
+  // const folderNotes = notes.filter((note) => note.folderId === folder.id);
 
   return (
     <div>
@@ -73,6 +84,9 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
         className="justify-between w-60 hover:bg-gray-200 rounded-md text-lg flex items-center cursor-pointer mb-1"
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
+        onClick={() => {
+          onSelectFolder(folder.id);
+        }} // 폴더 클릭 시 해당 폴더의 list 나옴
       >
         <div className="flex ">
           <img className="w-5 mx-1" src={folder_icon} />
@@ -127,7 +141,7 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
         <ul className="ml-6 mt-1 mb-3">
           {folderNotes.map((note) => (
             <Li key={note.id} onClick={() => nav(`/note/${note.id}`)}>
-              <span>{note.date} </span>
+              <span>{formatDate(note.createdAt)} </span>
               <span className="pt-light">{note.name}</span>
             </Li>
           ))}
