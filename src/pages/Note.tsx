@@ -23,7 +23,9 @@ const Note: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(note ? note.name : "");
-  const [newOneLine, setNewOneLine] = useState<string | null>(null);
+  const [newOneLine, setNewOneLine] = useState<string>(
+    note ? note.oneLineSummary || "" : ""
+  );
   const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +50,7 @@ const Note: React.FC = () => {
       if (detail) {
         setNote(detail);
         setNewTitle(detail.name);
-        setNewOneLine(detail.oneLineSummary);
+        setNewOneLine(detail.oneLineSummary || "");
       }
     };
 
@@ -98,7 +100,10 @@ const Note: React.FC = () => {
 
   const handleSaveOneLine = async () => {
     if (note && newOneLine?.trim()) {
-      await updateNoteOneLine(note.id, newOneLine.trim());
+      const updatedNote = await updateNoteOneLine(note.id, newOneLine.trim());
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
       setIsEditingOneLine(false);
     }
   };

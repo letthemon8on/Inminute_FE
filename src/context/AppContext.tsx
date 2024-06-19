@@ -62,7 +62,7 @@ interface AppContextType {
   deleteNote: (id: number) => Promise<void>;
   fetchNoteDetail: (noteId: number) => Promise<INote | null>;
   updateNoteTitle: (id: number, newTitle: string) => Promise<INote | null>;
-  updateNoteOneLine: (id: number, newOneLine: string) => void;
+  updateNoteOneLine: (id: number, newOneLine: string) => Promise<INote | null>;
   // updateScriptItem: (noteId: number, id: number, content: string) => void;
   // deleteScriptItem: (noteId: number, id: number) => void;
   // updateSummaryBySpkItem: (noteId: number, id: number, content: string) => void;
@@ -252,6 +252,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // 노트 제목 수정
   const updateNoteTitle = async (
     id: number,
     newTitle: string
@@ -276,12 +277,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const updateNoteOneLine = (id: number, newOneLine: string) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === id ? { ...note, oneLineSummary: newOneLine } : note
-      )
-    );
+  // 노트 한 줄 요약 수정
+  const updateNoteOneLine = async (
+    id: number,
+    newOneLine: string
+  ): Promise<INote | null> => {
+    try {
+      const response = await axios.patch(`notes/${id}`, {
+        summary: newOneLine,
+      });
+      if (response.data.isSuccess) {
+        const updatedNote = await fetchNoteDetail(id);
+        setNotes((prevNotes) =>
+          prevNotes.map((note) =>
+            note.id === id ? { ...note, oneLineSummary: newOneLine } : note
+          )
+        );
+        return updatedNote;
+      } else {
+        console.error(
+          "Failed to update note one line summary:",
+          response.data.message
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("Error updating note one line summary:", error);
+      return null;
+    }
   };
 
   // const updateScriptItem = (noteId: number, id: number, content: string) => {
