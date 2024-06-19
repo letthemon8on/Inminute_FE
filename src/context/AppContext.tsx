@@ -1,15 +1,55 @@
-import React, { createContext, useState, ReactNode, useContext } from "react";
-import {
-  IFolder,
-  INote,
-  initialFolders,
-  initialNotes,
-} from "../data/dummyData";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
+import axios from "../api/axiosConfig";
+
+export interface IFolder {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface INote {
+  id: number;
+  date: string;
+  time: string;
+  day: string;
+  title: string;
+  folderId: number;
+  oneLineSummary: string;
+  script: IScriptItem[];
+  summary: ISummaryItem[];
+  todo: IToDoItem[];
+}
+
+export interface IScriptItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
+
+export interface ISummaryItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
+
+export interface IToDoItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
 
 interface AppContextType {
   folders: IFolder[];
   notes: INote[];
   addFolder: (name: string) => void;
+  fetchFolder: () => void;
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, title: string) => INote;
@@ -37,30 +77,70 @@ export const useAppContext = () => {
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [folders, setFolders] = useState<IFolder[]>(initialFolders);
-  const [notes, setNotes] = useState<INote[]>(initialNotes);
+  const [folders, setFolders] = useState<IFolder[]>([]);
+  const [notes, setNotes] = useState<INote[]>([]);
 
-  const addFolder = (name: string) => {
-    const newFolder = {
-      id: folders.length + 1,
-      name,
-    };
-    setFolders([...folders, newFolder]);
+  const addFolder = async (name: string) => {
+    try {
+      const response = await axios.post("/folders", { name });
+      console.log(response.data); // 응답 데이터 로그 출력
+      const newFolder = {
+        id: response.data.result.id,
+        name,
+        createdAt: response.data.result.createdAt,
+      };
+      setFolders([...folders, newFolder]);
+    } catch (error) {
+      console.error("Error creating folder:", error);
+    }
   };
 
-  const updateFolder = (id: number, name: string) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === id ? { ...folder, name } : folder
-      )
-    );
+  const fetchFolder = async () => {
+    try {
+      const response = await axios.get("/folders/all");
+      console.log("API Response:", response.data.result); // 응답 데이터 로그 출력
+      setFolders(response.data.result.folders || []);
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
   };
 
-  const deleteFolder = (id: number) => {
-    setFolders((prevFolders) =>
-      prevFolders.filter((folder) => folder.id !== id)
-    );
-    setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
+  useEffect(() => {
+    fetchFolder();
+  }, []);
+
+  const updateFolder = async (id: number, name: string) => {
+    try {
+      const response = await axios.patch(`/folders/${id}`, { name });
+      const updatedFolder = response.data.result;
+      setFolders((prevFolders) =>
+        prevFolders.map((folder) =>
+          folder.id === id
+            ? {
+                ...folder,
+                name,
+                updatedAt: updatedFolder.updatedAt,
+              }
+            : folder
+        )
+      );
+    } catch (error) {
+      console.error("Error updating folder:", error);
+    }
+  };
+
+  const deleteFolder = async (id: number) => {
+    try {
+      const response = await axios.delete(`/folders/${id}`);
+      const deletedFolder = response.data.isSuccess;
+      console.log(deletedFolder); // 성공 로그 출력
+      setFolders((prevFolders) =>
+        prevFolders.filter((folder) => folder.id !== id)
+      );
+      setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
+    } catch (error) {
+      console.error("Error deleting folder:", error);
+    }
   };
 
   const formatDate = (date: Date) => {
@@ -219,6 +299,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         folders,
         notes,
         addFolder,
+        fetchFolder,
         updateFolder,
         deleteFolder,
         addNote,

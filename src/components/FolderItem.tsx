@@ -7,7 +7,7 @@ import chevron_down from "./../assets/chevron/chevron_down.svg";
 import ellipsis from "./../assets/ellipsis_horizontal.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
-import { INote } from "./../data/dummyData";
+import { INote } from "./../context/AppContext";
 import { useAppContext } from "./../context/AppContext";
 import DeleteFolderModal from "./modal/DeleteFolderModal";
 
@@ -49,8 +49,8 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
     setIsMenuOpen(false);
   };
 
-  const handleSaveRename = () => {
-    updateFolder(folder.id, newFolderName); // 폴더 이름 업데이트
+  const handleSaveRename = async () => {
+    await updateFolder(folder.id, newFolderName); // 폴더 이름 업데이트
     setIsEditing(false);
   };
 

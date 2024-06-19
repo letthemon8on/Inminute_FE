@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IToDoItem } from "../../data/dummyData";
+import { IToDoItem } from "../../context/AppContext";
 import pencil from "./../../assets/pencil.svg";
 import trash from "./../../assets/trash.svg";
 import { useAppContext } from "../../context/AppContext";

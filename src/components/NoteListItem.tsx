@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "./../styles/fonts/font.css";
 import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
-import { INote } from "../data/dummyData";
+import { INote } from "../context/AppContext";
 
 interface NoteListItemProps {
   note: INote;

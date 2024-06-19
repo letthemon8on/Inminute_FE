@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FolderItem from "./FolderItem";
 import folderIcon from "./../assets/folder.svg";
@@ -10,6 +10,7 @@ const Folder: React.FC = () => {
   const { folders, notes, addFolder } = useAppContext();
   const [newFolder, setNewFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [isComposing, setIsComposing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
@@ -28,9 +29,10 @@ const Folder: React.FC = () => {
     setFolderName("");
   };
 
-  const handleAddFolder = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && folderName.trim()) {
-      addFolder(folderName.trim());
+  const handleAddFolder = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isComposing && e.key === "Enter" && folderName.trim()) {
+      console.log("Creating folder:", folderName);
+      await addFolder(folderName.trim());
       setFolderName("");
       setNewFolder(false);
     }
@@ -70,6 +72,8 @@ const Folder: React.FC = () => {
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               onKeyDown={handleAddFolder}
+              onCompositionStart={() => setIsComposing(true)} // 한국어 중복 방지
+              onCompositionEnd={() => setIsComposing(false)}
             />
           </div>
         </div>

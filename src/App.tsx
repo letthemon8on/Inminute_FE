@@ -9,6 +9,7 @@ import About from "./pages/About";
 import List from "./pages/List";
 import Note from "./pages/Note";
 import Notfound from "./pages/Notfound";
+import React from "react";
 
 const App: React.FC = () => {
   return (
