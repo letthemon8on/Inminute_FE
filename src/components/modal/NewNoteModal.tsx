@@ -42,12 +42,16 @@ const NewNoteModal: React.FC = () => {
     }
   };
 
-  const handleCreateNote = () => {
+  const handleCreateNote = async () => {
     if (noteTitle.trim() && selectedOption) {
-      const newNote = addNote(selectedOption, noteTitle);
-      setNoteTitle("");
-      setOpenModal(false);
-      nav(`/note/${newNote.id}`);
+      const newNote = await addNote(selectedOption, noteTitle);
+      if (newNote) {
+        setNoteTitle("");
+        setOpenModal(false);
+        nav(`/note/${newNote.id}`);
+      } else {
+        setErrorMessage("노트를 생성하는 데 실패했습니다.");
+      }
     } else {
       setErrorMessage("회의 제목을 입력해주세요.");
     }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Folder from "../components/Folder";
 import NoteListItem from "../components/NoteListItem";
 import Navbar from "../components/Navbar";
@@ -8,26 +8,35 @@ import search from "../assets/search.svg";
 import { useAppContext } from "../context/AppContext";
 
 const List: React.FC = () => {
-  const { notes } = useAppContext();
+  const { notes, fetchNote, fetchFolderNote } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
+  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
 
   const options = [
     { value: 0, label: "최신순" },
     { value: 1, label: "오래된 순" },
   ];
 
+  // useEffect(() => {
+  //   if (selectedFolderId !== null) {
+  //     fetchFolderNote(selectedFolderId);
+  //   }
+  // }, [selectedFolderId]);
+
+  useEffect(() => {
+    if (selectedFolderId === null) {
+      fetchNote();
+    } else {
+      fetchFolderNote(selectedFolderId);
+    }
+  }, [selectedFolderId, fetchNote, fetchFolderNote]);
+
   const sortedNotes = useMemo(() => {
+    if (!notes || notes.length === 0) return [];
+
     const sorted = [...notes].sort((a, b) => {
-      const dateA = new Date(
-        `20${a.date.slice(0, 2)}-${a.date.slice(2, 4)}-${a.date.slice(4, 6)}T${
-          a.time
-        }`
-      );
-      const dateB = new Date(
-        `20${b.date.slice(0, 2)}-${b.date.slice(2, 4)}-${b.date.slice(4, 6)}T${
-          b.time
-        }`
-      );
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
 
       if (selectedOption === 0) {
         return dateB.getTime() - dateA.getTime(); // 최신순
@@ -38,11 +47,12 @@ const List: React.FC = () => {
     return sorted;
   }, [notes, selectedOption]);
 
+
   return (
     <div className="bg-bg-blue">
       <Navbar />
       <div className="flex w-full min-h-screen ">
-        <Folder />
+        <Folder onSelectFolder={setSelectedFolderId} />
 
         <div className="grow p-4 mr-24 mt-6">
           <div className="flex justify-between mb-4 items-center">
