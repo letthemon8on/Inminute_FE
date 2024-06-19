@@ -7,7 +7,7 @@ import chevron_down from "./../assets/chevron/chevron_down.svg";
 import ellipsis from "./../assets/ellipsis_horizontal.svg";
 import pencil from "./../assets/pencil.svg";
 import trash from "./../assets/trash.svg";
-import { INote } from "./../data/dummyData";
+import { INote } from "./../context/AppContext";
 import { useAppContext } from "./../context/AppContext";
 import DeleteFolderModal from "./modal/DeleteFolderModal";
 

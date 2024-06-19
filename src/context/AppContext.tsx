@@ -1,10 +1,40 @@
 import React, { createContext, useState, ReactNode, useContext } from "react";
-import {
-  IFolder,
-  INote,
-  initialFolders,
-  initialNotes,
-} from "../data/dummyData";
+
+export interface IFolder {
+  id: number;
+  name: string;
+}
+
+export interface INote {
+  id: number;
+  date: string;
+  time: string;
+  day: string;
+  title: string;
+  folderId: number;
+  oneLineSummary: string;
+  script: IScriptItem[];
+  summary: ISummaryItem[];
+  todo: IToDoItem[];
+}
+
+export interface IScriptItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
+
+export interface ISummaryItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
+
+export interface IToDoItem {
+  id: number;
+  speaker: string;
+  content: string;
+}
 
 interface AppContextType {
   folders: IFolder[];
@@ -37,8 +67,8 @@ export const useAppContext = () => {
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [folders, setFolders] = useState<IFolder[]>(initialFolders);
-  const [notes, setNotes] = useState<INote[]>(initialNotes);
+  const [folders, setFolders] = useState<IFolder[]>([]);
+  const [notes, setNotes] = useState<INote[]>([]);
 
   const addFolder = (name: string) => {
     const newFolder = {
