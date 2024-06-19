@@ -55,7 +55,8 @@ interface AppContextType {
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, name: string) => Promise<INote | undefined>;
-  fetchNote: (folderId: number) => Promise<INote[]>;
+  fetchNote: () => void;
+  fetchFolderNote: (folderId: number) => Promise<INote[]>;
   deleteNote: (folderId: number) => void;
   updateNoteTitle: (id: number, newTitle: string) => void;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
@@ -174,14 +175,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const fetchNote = async (folderId: number): Promise<INote[]> => {
+  const fetchNote = async () => {
+    try {
+      const response = await axios.get("/notes/all");
+      setNotes(response.data.result.notes || []);
+    } catch (error) {
+      console.error("Error fetching all notes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNote();
+  }, []);
+
+  const fetchFolderNote = async (folderId: number): Promise<INote[]> => {
     try {
       const response = await axios.get("/notes", { params: { folderId } });
       console.log("Note Response:", response.data);
       setNotes(response.data.result.notes);
       return response.data.result.notes || [];
     } catch (error) {
-      console.error("Error fetching notes:", error);
+      console.error("Error fetching folder notes:", error);
       return [];
     }
   };
@@ -309,6 +323,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         deleteFolder,
         addNote,
         fetchNote,
+        fetchFolderNote,
         deleteNote,
         updateNoteTitle,
         updateNoteOneLine,

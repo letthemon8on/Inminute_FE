@@ -8,7 +8,7 @@ import search from "../assets/search.svg";
 import { useAppContext } from "../context/AppContext";
 
 const List: React.FC = () => {
-  const { notes, fetchNote } = useAppContext();
+  const { notes, fetchNote, fetchFolderNote } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
 
@@ -17,11 +17,19 @@ const List: React.FC = () => {
     { value: 1, label: "오래된 순" },
   ];
 
+  // useEffect(() => {
+  //   if (selectedFolderId !== null) {
+  //     fetchFolderNote(selectedFolderId);
+  //   }
+  // }, [selectedFolderId]);
+
   useEffect(() => {
-    if (selectedFolderId !== null) {
-      fetchNote(selectedFolderId);
+    if (selectedFolderId === null) {
+      fetchNote();
+    } else {
+      fetchFolderNote(selectedFolderId);
     }
-  }, [selectedFolderId]);
+  }, [selectedFolderId, fetchNote, fetchFolderNote]);
 
   const sortedNotes = useMemo(() => {
     if (!notes || notes.length === 0) return [];

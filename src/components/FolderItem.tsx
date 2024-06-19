@@ -26,7 +26,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   notes,
   onSelectFolder,
 }) => {
-  const { updateFolder, fetchNote } = useAppContext();
+  const { updateFolder, fetchFolderNote } = useAppContext();
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folderNotes, setFolderNotes] = useState<INote[]>([]);
   const [isHover, setIsHover] = useState(false);
@@ -43,10 +43,11 @@ const FolderItem: React.FC<FolderItemProps> = ({
     }
   }, [isEditing]);
 
-  const handleFolderToggle = async () => {
+  const handleFolderToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsFolderOpen(!isFolderOpen);
     if (!isFolderOpen) {
-      const fetchedNotes = await fetchNote(folder.id); // 폴더가 열릴 때 노트 데이터를 가져옴
+      const fetchedNotes = await fetchFolderNote(folder.id); // 폴더가 열릴 때 노트 데이터를 가져옴
       setFolderNotes(fetchedNotes); // 가져온 노트 데이터를 상태에 저장
     }
   };
@@ -76,19 +77,14 @@ const FolderItem: React.FC<FolderItemProps> = ({
     }
   };
 
-  // const folderNotes = notes.filter((note) => note.folderId === folder.id);
-
   return (
     <div>
       <h3
         className="justify-between w-60 hover:bg-gray-200 rounded-md text-lg flex items-center cursor-pointer mb-1"
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
-        onClick={() => {
-          onSelectFolder(folder.id);
-        }} // 폴더 클릭 시 해당 폴더의 list 나옴
       >
-        <div className="flex ">
+        <div className="flex">
           <img className="w-5 mx-1" src={folder_icon} />
           {isEditing ? (
             <input
@@ -100,9 +96,8 @@ const FolderItem: React.FC<FolderItemProps> = ({
               ref={inputRef}
             />
           ) : (
-            folder.name
+            <div onClick={() => onSelectFolder(folder.id)}>{folder.name}</div>
           )}
-
           <img
             className="w-5"
             onClick={handleFolderToggle}

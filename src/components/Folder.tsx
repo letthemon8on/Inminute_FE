@@ -7,7 +7,7 @@ import minus from "./../assets/minus.svg";
 import { useAppContext } from "./../context/AppContext";
 
 interface FolderProps {
-  onSelectFolder: (folderId: number) => void;
+  onSelectFolder: (folderId: number | null) => void;
 }
 
 const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
@@ -82,7 +82,10 @@ const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
           </div>
         </div>
         <h3
-          onClick={() => nav("/list")}
+          onClick={() => {
+            onSelectFolder(null);
+            nav("/list");
+          }}
           className="hover:bg-gray-200 rounded-md mt-1 text-lg flex items-center cursor-pointer"
         >
           <img className="w-5 ml-2 mr-1" src={folderIcon} />
