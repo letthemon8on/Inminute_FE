@@ -1,5 +1,5 @@
 import React from "react";
-import ScriptItem from "./ScriptItem";
+// import ScriptItem from "./ScriptItem";
 import { useAppContext } from "../../context/AppContext";
 import { useParams } from "react-router-dom";
 
@@ -15,9 +15,9 @@ const Script: React.FC = () => {
 
   return (
     <section>
-      {note.script.map((item, index) => (
+      {/* {note.script.map((item, index) => (
         <ScriptItem key={index} noteId={noteId} item={item} />
-      ))}
+      ))} */}
     </section>
   );
 };

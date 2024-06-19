@@ -17,12 +17,6 @@ const List: React.FC = () => {
     { value: 1, label: "오래된 순" },
   ];
 
-  // useEffect(() => {
-  //   if (selectedFolderId !== null) {
-  //     fetchFolderNote(selectedFolderId);
-  //   }
-  // }, [selectedFolderId]);
-
   useEffect(() => {
     if (selectedFolderId === null) {
       fetchNote();

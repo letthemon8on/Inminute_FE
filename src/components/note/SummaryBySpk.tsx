@@ -1,5 +1,5 @@
 import React from "react";
-import SummaryBySpkItem from "./SummaryBySpkItem";
+// import SummaryBySpkItem from "./SummaryBySpkItem";
 import { useAppContext } from "../../context/AppContext";
 import { useParams } from "react-router-dom";
 
@@ -15,9 +15,9 @@ const SummaryBySpk: React.FC = () => {
 
   return (
     <div>
-      {note.summary.map((item, index) => (
+      {/* {note.summary.map((item, index) => (
         <SummaryBySpkItem key={index} noteId={noteId} item={item} />
-      ))}
+      ))} */}
     </div>
   );
 };

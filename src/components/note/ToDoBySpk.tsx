@@ -1,5 +1,5 @@
 import React from "react";
-import ToDoBySpkItem from "./ToDoBySpkItem";
+// import ToDoBySpkItem from "./ToDoBySpkItem";
 import { useAppContext } from "../../context/AppContext";
 import { useParams } from "react-router-dom";
 
@@ -15,9 +15,9 @@ const ToDoBySpk: React.FC = () => {
 
   return (
     <div>
-      {note.todo.map((item, index) => (
+      {/* {note.todo.map((item, index) => (
         <ToDoBySpkItem key={index} noteId={noteId} item={item} />
-      ))}
+      ))} */}
     </div>
   );
 };

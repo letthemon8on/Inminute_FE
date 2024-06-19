@@ -23,29 +23,31 @@ export interface INote {
   date: string;
   time: string;
   day: string;
-  oneLineSummary: string;
-  script: IScriptItem[];
-  summary: ISummaryItem[];
-  todo: IToDoItem[];
+  oneLineSummary: string | null;
+  script: string | null;
+  // script: IScriptItem[];
+  // summary: ISummaryItem[];
+  // todo: IToDoItem[];
+  participantNames: { name: string | null }[];
 }
 
-export interface IScriptItem {
-  id: number;
-  speaker: string;
-  content: string;
-}
+// export interface IScriptItem {
+//   id: number;
+//   speaker: string;
+//   content: string;
+// }
 
-export interface ISummaryItem {
-  id: number;
-  speaker: string;
-  content: string;
-}
+// export interface ISummaryItem {
+//   id: number;
+//   speaker: string;
+//   content: string;
+// }
 
-export interface IToDoItem {
-  id: number;
-  speaker: string;
-  content: string;
-}
+// export interface IToDoItem {
+//   id: number;
+//   speaker: string;
+//   content: string;
+// }
 
 interface AppContextType {
   folders: IFolder[];
@@ -57,15 +59,16 @@ interface AppContextType {
   addNote: (folderId: number, name: string) => Promise<INote | undefined>;
   fetchNote: () => void;
   fetchFolderNote: (folderId: number) => Promise<INote[]>;
-  deleteNote: (folderId: number) => void;
+  deleteNote: (id: number) => Promise<void>;
+  fetchNoteDetail: (noteId: number) => Promise<INote | null>;
   updateNoteTitle: (id: number, newTitle: string) => void;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
-  updateScriptItem: (noteId: number, id: number, content: string) => void;
-  deleteScriptItem: (noteId: number, id: number) => void;
-  updateSummaryBySpkItem: (noteId: number, id: number, content: string) => void;
-  deleteSummaryBySpkItem: (noteId: number, id: number) => void;
-  updateToDoBySpkItem: (noteId: number, id: number, content: string) => void;
-  deleteToDoBySpkItem: (noteId: number, id: number) => void;
+  // updateScriptItem: (noteId: number, id: number, content: string) => void;
+  // deleteScriptItem: (noteId: number, id: number) => void;
+  // updateSummaryBySpkItem: (noteId: number, id: number, content: string) => void;
+  // deleteSummaryBySpkItem: (noteId: number, id: number) => void;
+  // updateToDoBySpkItem: (noteId: number, id: number, content: string) => void;
+  // deleteToDoBySpkItem: (noteId: number, id: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -164,9 +167,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         time: formatTime(createdAt),
         day: formatDay(createdAt),
         oneLineSummary: "",
-        script: [],
-        summary: [],
-        todo: [],
+        script: "",
+        // summary: [],
+        // todo: [],
+        participantNames: [],
       };
       setNotes([...notes, newNote]);
       return newNote;
@@ -175,6 +179,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // 전체 노트 get
   const fetchNote = async () => {
     try {
       const response = await axios.get("/notes/all");
@@ -188,6 +193,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     fetchNote();
   }, []);
 
+  // 폴더별 노트 get
   const fetchFolderNote = async (folderId: number): Promise<INote[]> => {
     try {
       const response = await axios.get("/notes", { params: { folderId } });
@@ -200,8 +206,49 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const deleteNote = (id: number) => {
-    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  // 노트 delete
+  const deleteNote = async (id: number) => {
+    try {
+      const response = await axios.delete(`/notes/${id}`);
+      if (response.data.isSuccess) {
+        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+      } else {
+        console.error("Failed to delete note:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
+
+  // 노트 detail get
+  const fetchNoteDetail = async (noteId: number): Promise<INote | null> => {
+    try {
+      const response = await axios.get(`notes-detail/${noteId}`);
+      if (response.data.isSuccess) {
+        const result = response.data.result;
+        const formattedNote: INote = {
+          id: result.id,
+          name: result.name,
+          folderId: result.folderId,
+          createdAt: result.createdAt,
+          date: formatDate(result.createdAt),
+          day: formatDay(result.createdAt),
+          time: formatTime(result.createdAt),
+          oneLineSummary: result.summary,
+          script: result.script,
+          participantNames: result.participantNames.map(
+            (p: { name: string }) => ({ name: p.name })
+          ),
+        };
+        return formattedNote;
+      } else {
+        console.error("Failed to fetch note details:", response.data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching note details:", error);
+      return null;
+    }
   };
 
   const updateNoteTitle = (id: number, newTitle: string) => {
@@ -220,97 +267,97 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
-  const updateScriptItem = (noteId: number, id: number, content: string) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              script: note.script.map((item) =>
-                item.id === id ? { ...item, content } : item
-              ),
-            }
-          : note
-      )
-    );
-  };
+  // const updateScriptItem = (noteId: number, id: number, content: string) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             script: note.script.map((item) =>
+  //               item.id === id ? { ...item, content } : item
+  //             ),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
-  const deleteScriptItem = (noteId: number, id: number) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              script: note.script.filter((item) => item.id !== id),
-            }
-          : note
-      )
-    );
-  };
+  // const deleteScriptItem = (noteId: number, id: number) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             script: note.script.filter((item) => item.id !== id),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
-  const updateSummaryBySpkItem = (
-    noteId: number,
-    id: number,
-    content: string
-  ) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              summary: note.summary.map((item) =>
-                item.id === id ? { ...item, content } : item
-              ),
-            }
-          : note
-      )
-    );
-  };
+  // const updateSummaryBySpkItem = (
+  //   noteId: number,
+  //   id: number,
+  //   content: string
+  // ) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             summary: note.summary.map((item) =>
+  //               item.id === id ? { ...item, content } : item
+  //             ),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
-  const deleteSummaryBySpkItem = (noteId: number, id: number) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              summary: note.summary.filter((item) => item.id !== id),
-            }
-          : note
-      )
-    );
-  };
+  // const deleteSummaryBySpkItem = (noteId: number, id: number) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             summary: note.summary.filter((item) => item.id !== id),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
-  const updateToDoBySpkItem = (
-    noteId: number,
-    itemId: number,
-    content: string
-  ) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              todo: note.todo.map((item) =>
-                item.id === itemId ? { ...item, content } : item
-              ),
-            }
-          : note
-      )
-    );
-  };
+  // const updateToDoBySpkItem = (
+  //   noteId: number,
+  //   itemId: number,
+  //   content: string
+  // ) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             todo: note.todo.map((item) =>
+  //               item.id === itemId ? { ...item, content } : item
+  //             ),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
-  const deleteToDoBySpkItem = (noteId: number, itemId: number) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === noteId
-          ? {
-              ...note,
-              todo: note.todo.filter((item) => item.id !== itemId),
-            }
-          : note
-      )
-    );
-  };
+  // const deleteToDoBySpkItem = (noteId: number, itemId: number) => {
+  //   setNotes((prevNotes) =>
+  //     prevNotes.map((note) =>
+  //       note.id === noteId
+  //         ? {
+  //             ...note,
+  //             todo: note.todo.filter((item) => item.id !== itemId),
+  //           }
+  //         : note
+  //     )
+  //   );
+  // };
 
   return (
     <AppContext.Provider
@@ -325,14 +372,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         fetchNote,
         fetchFolderNote,
         deleteNote,
+        fetchNoteDetail,
         updateNoteTitle,
         updateNoteOneLine,
-        updateScriptItem,
-        deleteScriptItem,
-        updateSummaryBySpkItem,
-        deleteSummaryBySpkItem,
-        updateToDoBySpkItem,
-        deleteToDoBySpkItem,
+        // updateScriptItem,
+        // deleteScriptItem,
+        // updateSummaryBySpkItem,
+        // deleteSummaryBySpkItem,
+        // updateToDoBySpkItem,
+        // deleteToDoBySpkItem,
       }}
     >
       {children}
