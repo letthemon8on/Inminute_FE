@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "./../api/axiosConfig";
 import calendar from "./../assets/calendar.svg";
 import clock from "./../assets/clock.svg";
 import pencil from "./../assets/pencil.svg";
@@ -13,7 +12,6 @@ import Navbar from "../components/Navbar";
 // import ToDoBySpk from "../components/note/ToDoBySpk";
 import { useAppContext, INote } from "../context/AppContext";
 import DeleteNoteModal from "../components/modal/DeleteNoteModal";
-import { formatDate, formatDay, formatTime } from "../util/date";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,44 +42,6 @@ const Note: React.FC = () => {
     }
   }, [isEditingOneLine]);
 
-  // useEffect(() => {
-  //   const fetchNoteDetail = async () => {
-  //     try {
-  //       const response = await axios.get(`/api/notes-detail/${noteId}`);
-  //       console.log(response.data.result); // 응답 데이터 확인
-  //       if (response.data.isSuccess) {
-  //         const result = response.data.result;
-  //         const formattedNote: INote = {
-  //           id: result.id,
-  //           name: result.name,
-  //           folderId: result.folderId,
-  //           createdAt: result.createdAt,
-  //           date: formatDate(result.createdAt),
-  //           day: formatDay(result.createdAt),
-  //           time: formatTime(result.createdAt),
-  //           oneLineSummary: result.summary,
-  //           script: result.script,
-  //           // summary: [], // 추후 추가
-  //           // todo: [], // 추후 추가
-  //           participantNames: [],
-  //           // participantNames: result.participantNames.map(
-  //           //   (p: { name: string }) => ({ name: p.name })
-  //           // ),
-  //         };
-  //         setNote(formattedNote);
-  //         setNewTitle(result.name);
-  //         setNewOneLine(result.summary);
-  //       } else {
-  //         console.error("Failed to fetch note details:", response.data.message);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching note details:", error);
-  //     }
-  //   };
-
-  //   fetchNoteDetail();
-  // }, [noteId]);
-
   useEffect(() => {
     const getNoteDetail = async () => {
       const detail = await fetchNoteDetail(noteId);
@@ -93,7 +53,7 @@ const Note: React.FC = () => {
     };
 
     getNoteDetail();
-  }, [noteId, fetchNoteDetail]);
+  }, [noteId]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -109,9 +69,12 @@ const Note: React.FC = () => {
     setNewTitle(e.target.value);
   };
 
-  const handleSaveTitle = () => {
-    if (note && newTitle.trim()) {
-      updateNoteTitle(note.id, newTitle.trim());
+  const handleSaveTitle = async () => {
+    if (note && newTitle?.trim()) {
+      const updatedNote = await updateNoteTitle(note.id, newTitle.trim());
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
       setIsEditingTitle(false);
     }
   };
@@ -133,9 +96,9 @@ const Note: React.FC = () => {
     setNewOneLine(e.target.value);
   };
 
-  const handleSaveOneLine = () => {
+  const handleSaveOneLine = async () => {
     if (note && newOneLine?.trim()) {
-      updateNoteOneLine(note.id, newOneLine.trim());
+      await updateNoteOneLine(note.id, newOneLine.trim());
       setIsEditingOneLine(false);
     }
   };

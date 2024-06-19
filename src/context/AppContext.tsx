@@ -61,7 +61,7 @@ interface AppContextType {
   fetchFolderNote: (folderId: number) => Promise<INote[]>;
   deleteNote: (id: number) => Promise<void>;
   fetchNoteDetail: (noteId: number) => Promise<INote | null>;
-  updateNoteTitle: (id: number, newTitle: string) => void;
+  updateNoteTitle: (id: number, newTitle: string) => Promise<INote | null>;
   updateNoteOneLine: (id: number, newOneLine: string) => void;
   // updateScriptItem: (noteId: number, id: number, content: string) => void;
   // deleteScriptItem: (noteId: number, id: number) => void;
@@ -224,6 +224,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const fetchNoteDetail = async (noteId: number): Promise<INote | null> => {
     try {
       const response = await axios.get(`notes-detail/${noteId}`);
+      console.log(response.data.result);
       if (response.data.isSuccess) {
         const result = response.data.result;
         const formattedNote: INote = {
@@ -251,12 +252,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const updateNoteTitle = (id: number, newTitle: string) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === id ? { ...note, name: newTitle } : note
-      )
-    );
+  const updateNoteTitle = async (
+    id: number,
+    newTitle: string
+  ): Promise<INote | null> => {
+    try {
+      const response = await axios.patch(`notes/${id}`, { name: newTitle });
+      if (response.data.isSuccess) {
+        const updatedNote = await fetchNoteDetail(id);
+        setNotes((prevNotes) =>
+          prevNotes.map((note) =>
+            note.id === id ? { ...note, name: newTitle } : note
+          )
+        );
+        return updatedNote;
+      } else {
+        console.error("Failed to update note title:", response.data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error updating note title:", error);
+      return null;
+    }
   };
 
   const updateNoteOneLine = (id: number, newOneLine: string) => {
