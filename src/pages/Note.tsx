@@ -21,7 +21,7 @@ const Note: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
-  const [newTitle, setNewTitle] = useState<string>(note ? note.title : "");
+  const [newTitle, setNewTitle] = useState<string>(note ? note.name : "");
   const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
   const [newOneLine, setNewOneLine] = useState<string>(
     note ? note.oneLineSummary : ""
@@ -120,9 +120,7 @@ const Note: React.FC = () => {
             <div className="flex items-center text-gray-500">
               <span className="mr-4 flex items-center">
                 <img className="w-5 mx-1" src={calendar} />
-                <span>
-                  {note.date} {note.day}
-                </span>
+                <span> {note.date} {note.day}</span>
               </span>
               <span className="mr-2 flex items-center">
                 <img className="w-5 mx-1" src={clock} />
@@ -142,7 +140,7 @@ const Note: React.FC = () => {
                   ref={titleInputRef}
                 />
               ) : (
-                <h2 className="text-4xl my-3 mr-4">{note.title}</h2>
+                <h2 className="text-4xl my-3 mr-4">{note.name}</h2>
               )}
               <div className="flex items-center">
                 <button

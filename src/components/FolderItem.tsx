@@ -128,7 +128,7 @@ const FolderItem: React.FC<FolderItemProps> = ({ folder, notes }) => {
           {folderNotes.map((note) => (
             <Li key={note.id} onClick={() => nav(`/note/${note.id}`)}>
               <span>{note.date} </span>
-              <span className="pt-light">{note.title}</span>
+              <span className="pt-light">{note.name}</span>
             </Li>
           ))}
         </ul>
