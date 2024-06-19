@@ -1,9 +1,16 @@
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
 import axios from "../api/axiosConfig";
 
 export interface IFolder {
   id: number;
   name: string;
+  createdAt: string;
 }
 
 export interface INote {
@@ -41,6 +48,7 @@ interface AppContextType {
   folders: IFolder[];
   notes: INote[];
   addFolder: (name: string) => void;
+  fetchFolder: () => void;
   updateFolder: (id: number, name: string) => void;
   deleteFolder: (id: number) => void;
   addNote: (folderId: number, title: string) => INote;
@@ -76,14 +84,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       const response = await axios.post("/folders", { name });
       console.log(response.data); // 응답 데이터 로그 출력
       const newFolder = {
-        id: response.data.id,
+        id: response.data.result.id,
         name,
+        createdAt: response.data.result.createdAt,
       };
       setFolders([...folders, newFolder]);
     } catch (error) {
       console.error("Error creating folder:", error);
     }
   };
+
+  const fetchFolder = async () => {
+    try {
+      const response = await axios.get("/folders/all");
+      console.log("API Response:", response.data);
+      setFolders(response.data.result.folders || []);
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFolder();
+  }, []);
 
   const updateFolder = (id: number, name: string) => {
     setFolders((prevFolders) =>
@@ -256,6 +279,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         folders,
         notes,
         addFolder,
+        fetchFolder,
         updateFolder,
         deleteFolder,
         addNote,
