@@ -1,4 +1,5 @@
 import React, { createContext, useState, ReactNode, useContext } from "react";
+import axios from "../api/axiosConfig";
 
 export interface IFolder {
   id: number;
@@ -70,12 +71,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [folders, setFolders] = useState<IFolder[]>([]);
   const [notes, setNotes] = useState<INote[]>([]);
 
-  const addFolder = (name: string) => {
-    const newFolder = {
-      id: folders.length + 1,
-      name,
-    };
-    setFolders([...folders, newFolder]);
+  const addFolder = async (name: string) => {
+    try {
+      const response = await axios.post("/folders", { name });
+      console.log(response.data); // 응답 데이터 로그 출력
+      const newFolder = {
+        id: response.data.id,
+        name,
+      };
+      setFolders([...folders, newFolder]);
+    } catch (error) {
+      console.error("Error creating folder:", error);
+    }
   };
 
   const updateFolder = (id: number, name: string) => {
