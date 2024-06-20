@@ -67,7 +67,7 @@ interface AppContextType {
   updateNoteTitle: (id: number, newTitle: string) => Promise<INote | null>;
   updateNoteOneLine: (id: number, newOneLine: string) => Promise<INote | null>;
   deleteNote: (id: number) => Promise<void>;
-  addZoom: (params: { noteId: number }) => Promise<void>;
+  addZoom: (noteId: number) => Promise<void>;
   // 추후 반영
   // updateScriptItem: (noteId: number, id: number, content: string) => void;
   // deleteScriptItem: (noteId: number, id: number) => void;
@@ -315,9 +315,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // zoom 미팅 생성
-  const addZoom = async (params: { noteId: number }) => {
+  const addZoom = async (noteId: number) => {
     try {
-      await axios.post("/zoom/create-meeting", params);
+      const params = {
+        params: {
+          noteId: noteId,
+        },
+      };
+      const response = await axios.post("/zoom/create-meeting", null, params);
+      console.log("Zoom meeting created successfully:", response.data);
     } catch (error) {
       console.error("Failed to create Zoom meeting:", error);
     }
