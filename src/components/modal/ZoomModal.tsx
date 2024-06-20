@@ -1,3 +1,4 @@
+import React, { useRef } from "react";
 import "./../../styles/fonts/font.css";
 import Modal from "./Modal";
 import x from "./../../assets/x.svg";
@@ -12,7 +13,7 @@ const ZoomModal: React.FC<ZoomModalProps> = ({ noteId, onClose }) => {
   const { addZoom } = useAppContext();
 
   const handleAddZoom = async () => {
-    await addZoom({ noteId });
+    await addZoom(noteId);
     onClose();
   };
 
@@ -23,9 +24,9 @@ const ZoomModal: React.FC<ZoomModalProps> = ({ noteId, onClose }) => {
           onClick={onClose}
           className="cursor-pointer absolute right-6 top-6 text-gray-500"
         >
-          <img className="w-5" src={x} />
+          <img className="w-5" src={x} alt="close" />
         </div>
-        <img className="w-14 mt-16" src="/favicon.svg" />
+        <img className="w-14 mt-16" src="/favicon.svg" alt="favicon" />
         <div className="mt-4 text-3xl text-gray-500">Create Zoom Meeting</div>
         <section className="w-72 mt-8">
           <div className="text-gray-500 text-md mb-4 text-center">
