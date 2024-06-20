@@ -64,7 +64,7 @@ const DropDown: React.FC<DropDownProps> = ({
         </div>
         <span className="flex items-center">
           {isOpen ? (
-            <img className="w-5 right-5" src={chevron_up} />
+            <img className="w-5" src={chevron_up} />
           ) : (
             <img className="w-5" src={chevron_down} />
           )}

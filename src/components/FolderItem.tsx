@@ -21,11 +21,7 @@ interface FolderItemProps {
   onSelectFolder: (folderId: number) => void;
 }
 
-const FolderItem: React.FC<FolderItemProps> = ({
-  folder,
-  notes,
-  onSelectFolder,
-}) => {
+const FolderItem: React.FC<FolderItemProps> = ({ folder, onSelectFolder }) => {
   const { updateFolder, fetchFolderNote } = useAppContext();
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folderNotes, setFolderNotes] = useState<INote[]>([]);
@@ -35,6 +31,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -43,11 +40,32 @@ const FolderItem: React.FC<FolderItemProps> = ({
     }
   }, [isEditing]);
 
+  // 외부 누르면 menu 닫히게
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+        setIsHover(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      setIsHover(true);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   const handleFolderToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFolderOpen(!isFolderOpen);
     if (!isFolderOpen) {
-      const fetchedNotes = await fetchFolderNote(folder.id); 
+      const fetchedNotes = await fetchFolderNote(folder.id);
       setFolderNotes(fetchedNotes);
     }
   };
@@ -80,9 +98,11 @@ const FolderItem: React.FC<FolderItemProps> = ({
   return (
     <div>
       <h3
-        className="justify-between w-60 hover:bg-gray-200 rounded-md text-lg flex items-center cursor-pointer mb-1"
+        className={`justify-between w-60 rounded-md text-lg flex items-center cursor-pointer mb-1 ${
+          isHover ? "bg-gray-200" : ""
+        }`}
         onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+        onMouseLeave={() => !isMenuOpen && setIsHover(false)}
       >
         <div className="flex">
           <img className="w-5 mx-1" src={folder_icon} />
@@ -109,7 +129,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
         )}
       </h3>
       {isMenuOpen && (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <div className="absolute left-40 w-20 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div className="flex">
               <img
