@@ -12,10 +12,11 @@ const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
   folderId,
   onClose,
 }) => {
-  const { deleteFolder } = useAppContext();
+  const { deleteFolder, fetchNote } = useAppContext();
 
   const handleDeleteFolder = async () => {
     await deleteFolder(folderId);
+    await fetchNote(); // 폴더 삭제 후 전체 노트 다시 가져오기
     onClose();
   };
 
