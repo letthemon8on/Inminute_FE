@@ -26,11 +26,14 @@ export interface INote {
   day: string;
   oneLineSummary: string | null;
   script: string | null;
+  // 추후 반영
   // script: IScriptItem[];
   // summary: ISummaryItem[];
   // todo: IToDoItem[];
   participantNames: { name: string | null }[];
 }
+
+// 추후 반영
 
 // export interface IScriptItem {
 //   id: number;
@@ -60,10 +63,12 @@ interface AppContextType {
   addNote: (folderId: number, name: string) => Promise<INote | undefined>;
   fetchNote: () => void;
   fetchFolderNote: (folderId: number) => Promise<INote[]>;
-  deleteNote: (id: number) => Promise<void>;
   fetchNoteDetail: (noteId: number) => Promise<INote | null>;
   updateNoteTitle: (id: number, newTitle: string) => Promise<INote | null>;
   updateNoteOneLine: (id: number, newOneLine: string) => Promise<INote | null>;
+  deleteNote: (id: number) => Promise<void>;
+  addZoom: (params: { noteId: number }) => Promise<void>;
+  // 추후 반영
   // updateScriptItem: (noteId: number, id: number, content: string) => void;
   // deleteScriptItem: (noteId: number, id: number) => void;
   // updateSummaryBySpkItem: (noteId: number, id: number, content: string) => void;
@@ -88,10 +93,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const [folders, setFolders] = useState<IFolder[]>([]);
   const [notes, setNotes] = useState<INote[]>([]);
 
+  // 폴더 생성 (CREATE)
   const addFolder = async (name: string) => {
     try {
       const response = await axios.post("/folders", { name });
-      console.log(response.data); // 응답 데이터 로그 출력
       const newFolder = {
         id: response.data.result.id,
         name,
@@ -103,10 +108,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // 폴더 가져오기 (READ)
   const fetchFolder = async () => {
     try {
       const response = await axios.get("/folders/all");
-      console.log("API Response:", response.data.result); // 응답 데이터 로그 출력
       setFolders(response.data.result.folders || []);
     } catch (error) {
       console.error("Error fetching folders:", error);
@@ -117,6 +122,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     fetchFolder();
   }, []);
 
+  // 폴더 수정 (UPDATE)
   const updateFolder = async (id: number, name: string) => {
     try {
       const response = await axios.patch(`/folders/${id}`, { name });
@@ -137,6 +143,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // 폴더 삭제 (DELETE)
   const deleteFolder = useCallback(async (id: number) => {
     try {
       const response = await axios.delete(`/folders/${id}`);
@@ -153,6 +160,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, []);
 
+  // 노트 생성 (CREATE)
   const addNote = async (
     folderId: number,
     name: string
@@ -160,7 +168,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const response = await axios.post("/notes", { folderId, name });
       const createdAt = response.data.result.createdAt;
-      console.log(response.data); // 응답 데이터 로그 출력
       const newNote = {
         id: response.data.result.id,
         name,
@@ -182,24 +189,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  // 전체 노트 get
-  // 원래
-
-  // const fetchNote = async () => {
-  //   try {
-  //     const response = await axios.get("/notes/all");
-  //     setNotes(response.data.result.notes || []);
-  //   } catch (error) {
-  //     console.error("Error fetching all notes:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchNote();
-  // }, []);
-
-  // 2안
-
+  // 전체 노트 가져오기 (READ)
   const fetchNote = useCallback(async () => {
     try {
       const response = await axios.get("/notes/all");
@@ -209,12 +199,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, []);
 
-  // 폴더별 노트 get
+  // 폴더별 노트 가져오기 (READ)
   const fetchFolderNote = useCallback(
     async (folderId: number): Promise<INote[]> => {
       try {
         const response = await axios.get("/notes", { params: { folderId } });
-        console.log("Note Response:", response.data);
         setNotes(response.data.result.notes);
         return response.data.result.notes || [];
       } catch (error) {
@@ -225,53 +214,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     []
   );
 
-  // 노트 delete
-  const deleteNote = async (id: number) => {
-    try {
-      const response = await axios.delete(`/notes/${id}`);
-      if (response.data.isSuccess) {
-        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
-      } else {
-        console.error("Failed to delete note:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting note:", error);
-    }
-  };
-
-  // 노트 detail get
-  const fetchNoteDetail = async (noteId: number): Promise<INote | null> => {
-    try {
-      const response = await axios.get(`notes-detail/${noteId}`);
-      console.log(response.data.result);
-      if (response.data.isSuccess) {
-        const result = response.data.result;
-        const formattedNote: INote = {
-          id: result.id,
-          name: result.name,
-          folderId: result.folderId,
-          createdAt: result.createdAt,
-          date: formatDate(result.createdAt),
-          day: formatDay(result.createdAt),
-          time: formatTime(result.createdAt),
-          oneLineSummary: result.summary,
-          script: result.script,
-          participantNames: result.participantNames.map(
-            (p: { name: string }) => ({ name: p.name })
-          ),
-        };
-        return formattedNote;
-      } else {
-        console.error("Failed to fetch note details:", response.data.message);
-        return null;
-      }
-    } catch (error) {
-      console.error("Error fetching note details:", error);
-      return null;
-    }
-  };
-
-  // 노트 제목 수정
+  // 노트 제목 수정 (UPDATE)
   const updateNoteTitle = async (
     id: number,
     newTitle: string
@@ -296,7 +239,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  // 노트 한 줄 요약 수정
+  // 노트 한 줄 요약 수정 (UPDATE)
   const updateNoteOneLine = async (
     id: number,
     newOneLine: string
@@ -325,6 +268,62 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       return null;
     }
   };
+
+  // 노트 detail 가져오기 (READ)
+  const fetchNoteDetail = async (noteId: number): Promise<INote | null> => {
+    try {
+      const response = await axios.get(`notes-detail/${noteId}`);
+      if (response.data.isSuccess) {
+        const result = response.data.result;
+        const formattedNote: INote = {
+          id: result.id,
+          name: result.name,
+          folderId: result.folderId,
+          createdAt: result.createdAt,
+          date: formatDate(result.createdAt),
+          day: formatDay(result.createdAt),
+          time: formatTime(result.createdAt),
+          oneLineSummary: result.summary,
+          script: result.script,
+          participantNames: result.participantNames.map(
+            (p: { name: string }) => ({ name: p.name })
+          ),
+        };
+        return formattedNote;
+      } else {
+        console.error("Failed to fetch note details:", response.data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching note details:", error);
+      return null;
+    }
+  };
+
+  // 노트 삭제 (DELETE)
+  const deleteNote = async (id: number) => {
+    try {
+      const response = await axios.delete(`/notes/${id}`);
+      if (response.data.isSuccess) {
+        setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+      } else {
+        console.error("Failed to delete note:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
+
+  // zoom 미팅 생성
+  const addZoom = async (params: { noteId: number }) => {
+    try {
+      await axios.post("/zoom/create-meeting", params);
+    } catch (error) {
+      console.error("Failed to create Zoom meeting:", error);
+    }
+  };
+
+  // 추후 반영
 
   // const updateScriptItem = (noteId: number, id: number, content: string) => {
   //   setNotes((prevNotes) =>
@@ -430,10 +429,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         addNote,
         fetchNote,
         fetchFolderNote,
-        deleteNote,
         fetchNoteDetail,
         updateNoteTitle,
         updateNoteOneLine,
+        deleteNote,
+        addZoom,
+        // 추후 반영
         // updateScriptItem,
         // deleteScriptItem,
         // updateSummaryBySpkItem,

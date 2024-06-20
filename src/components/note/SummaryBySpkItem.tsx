@@ -1,3 +1,5 @@
+// 추후 반영
+
 // import React, { useState, useRef, useEffect } from "react";
 // import { ISummaryItem } from "../../context/AppContext";
 // import pencil from "./../../assets/pencil.svg";

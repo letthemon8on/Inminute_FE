@@ -46,23 +46,25 @@ const DropDown: React.FC<DropDownProps> = ({
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside); // 컴포넌트가 마운트될 때
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside); // 컴포넌트가 언마운트될 때
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
     <div className={`relative ${width}`} ref={dropdownRef}>
       <div
-        className={`${height} flex items-center justify-between cursor-pointer border border-solid border-gray-200 bg-white rounded-2xl px-3 text-gray-500`}
+        className={`${height} flex items-center cursor-pointer border border-solid border-gray-200 bg-white rounded-2xl px-3 text-gray-500`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {/* options 배열에서 현재 선택된 옵션을 찾음 */}
-        {options.find((option) => option.value === selectedOption)?.label}
-        <span>
+        <div className="flex-1">
+          {/* options 배열에서 현재 선택된 옵션을 찾음 */}
+          {options.find((option) => option.value === selectedOption)?.label}
+        </div>
+        <span className="flex items-center">
           {isOpen ? (
-            <img className="w-5" src={chevron_up} />
+            <img className="w-5 right-5" src={chevron_up} />
           ) : (
             <img className="w-5" src={chevron_down} />
           )}

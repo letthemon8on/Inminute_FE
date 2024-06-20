@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "http://localhost:8080/api",
-  withCredentials: true, // 쿠키를 포함한 요청 허용
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },

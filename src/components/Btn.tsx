@@ -1,7 +1,6 @@
 import React from "react";
 import "./../styles/fonts/font.css";
 
-// Props 타입 정의
 interface BtnProps {
   label: string;
 }
