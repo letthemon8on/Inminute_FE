@@ -12,6 +12,7 @@ import Navbar from "../components/Navbar";
 // import ToDoBySpk from "../components/note/ToDoBySpk";
 import { useAppContext, INote } from "../context/AppContext";
 import DeleteNoteModal from "../components/modal/DeleteNoteModal";
+import ZoomModal from "../components/modal/ZoomModal";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,8 @@ const Note: React.FC = () => {
     useAppContext();
   const [note, setNote] = useState<INote | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isZoomModalOpen, setZoomModalOpen] = useState(false);
+  const [currentNoteId, setCurrentNoteId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(note ? note.name : "");
@@ -135,9 +138,22 @@ const Note: React.FC = () => {
 
   // zoom과 연동
 
-  const onZoom = () => {
-    window.location.href =
-      "https://zoom.us/oauth/authorize?response_type=code&client_id=G1cmu02jTSaxutApfmFYVA&redirect_uri=http://localhost:8080/zoomApi";
+  const onZoom = (noteId: number) => {
+    window.open(
+      `https://zoom.us/oauth/authorize?response_type=code&client_id=G1cmu02jTSaxutApfmFYVA&redirect_uri=http://localhost:8080/zoomApi`,
+      "_blank"
+    );
+    handleOpenZoomModal(noteId);
+  };
+
+  const handleOpenZoomModal = (noteId: number) => {
+    setCurrentNoteId(noteId);
+    setZoomModalOpen(true);
+  };
+
+  const handleCloseZoomModal = () => {
+    setZoomModalOpen(false);
+    setCurrentNoteId(null);
   };
 
   return (
@@ -198,7 +214,7 @@ const Note: React.FC = () => {
             </div>
             <img
               className="w-24 mr-2 cursor-pointer"
-              onClick={onZoom}
+              onClick={() => onZoom(noteId)}
               src={zoom}
             />
           </div>
@@ -292,6 +308,9 @@ const Note: React.FC = () => {
           onClose={() => setIsDeleteModalOpen(false)}
           onClick={handleDeleteNote}
         />
+      )}
+      {isZoomModalOpen && currentNoteId && (
+        <ZoomModal noteId={currentNoteId} onClose={handleCloseZoomModal} />
       )}
     </div>
   );

@@ -63,10 +63,11 @@ interface AppContextType {
   addNote: (folderId: number, name: string) => Promise<INote | undefined>;
   fetchNote: () => void;
   fetchFolderNote: (folderId: number) => Promise<INote[]>;
-  deleteNote: (id: number) => Promise<void>;
   fetchNoteDetail: (noteId: number) => Promise<INote | null>;
   updateNoteTitle: (id: number, newTitle: string) => Promise<INote | null>;
   updateNoteOneLine: (id: number, newOneLine: string) => Promise<INote | null>;
+  deleteNote: (id: number) => Promise<void>;
+  addZoom: (params: { noteId: number }) => Promise<void>;
   // 추후 반영
   // updateScriptItem: (noteId: number, id: number, content: string) => void;
   // deleteScriptItem: (noteId: number, id: number) => void;
@@ -313,6 +314,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // zoom 미팅 생성
+  const addZoom = async (params: { noteId: number }) => {
+    try {
+      await axios.post("/zoom/create-meeting", params);
+    } catch (error) {
+      console.error("Failed to create Zoom meeting:", error);
+    }
+  };
+
   // 추후 반영
 
   // const updateScriptItem = (noteId: number, id: number, content: string) => {
@@ -419,10 +429,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         addNote,
         fetchNote,
         fetchFolderNote,
-        deleteNote,
         fetchNoteDetail,
         updateNoteTitle,
         updateNoteOneLine,
+        deleteNote,
+        addZoom,
         // 추후 반영
         // updateScriptItem,
         // deleteScriptItem,
