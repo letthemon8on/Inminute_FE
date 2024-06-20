@@ -55,7 +55,7 @@ const Note: React.FC = () => {
     };
 
     getNoteDetail();
-  }, [noteId]);
+  }, [noteId, fetchNoteDetail]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);

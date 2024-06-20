@@ -23,7 +23,7 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
     };
 
     getNoteDetail();
-  }, [fetchNoteDetail, note.id]);
+  }, [note.id]);
 
   if (!noteDetail) {
     return <div>Loading...</div>;
@@ -52,7 +52,9 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
           </div>
         </div>
         <p className="text-gray-500 text-base mx-11 my-2">
-          {noteDetail.oneLineSummary ? noteDetail.oneLineSummary : "No summary available"}
+          {noteDetail.oneLineSummary
+            ? noteDetail.oneLineSummary
+            : "No summary available"}
         </p>
       </Link>
     </div>

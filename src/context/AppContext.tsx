@@ -4,6 +4,7 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  useCallback,
 } from "react";
 import axios from "../api/axiosConfig";
 import { formatDate, formatDay, formatTime } from "../util/date";
@@ -136,19 +137,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const deleteFolder = async (id: number) => {
+  const deleteFolder = useCallback(async (id: number) => {
     try {
       const response = await axios.delete(`/folders/${id}`);
-      const deletedFolder = response.data.isSuccess;
-      console.log(deletedFolder); // 성공 로그 출력
-      setFolders((prevFolders) =>
-        prevFolders.filter((folder) => folder.id !== id)
-      );
-      setNotes((prevNotes) => prevNotes.filter((note) => note.folderId !== id));
+      if (response.data.isSuccess) {
+        setFolders((prevFolders) =>
+          prevFolders.filter((folder) => folder.id !== id)
+        );
+        setNotes((prevNotes) =>
+          prevNotes.filter((note) => note.folderId !== id)
+        );
+      }
     } catch (error) {
       console.error("Error deleting folder:", error);
     }
-  };
+  }, []);
 
   const addNote = async (
     folderId: number,
@@ -180,31 +183,47 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // 전체 노트 get
-  const fetchNote = async () => {
+  // 원래
+
+  // const fetchNote = async () => {
+  //   try {
+  //     const response = await axios.get("/notes/all");
+  //     setNotes(response.data.result.notes || []);
+  //   } catch (error) {
+  //     console.error("Error fetching all notes:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchNote();
+  // }, []);
+
+  // 2안
+
+  const fetchNote = useCallback(async () => {
     try {
       const response = await axios.get("/notes/all");
       setNotes(response.data.result.notes || []);
     } catch (error) {
       console.error("Error fetching all notes:", error);
     }
-  };
-
-  useEffect(() => {
-    fetchNote();
   }, []);
 
   // 폴더별 노트 get
-  const fetchFolderNote = async (folderId: number): Promise<INote[]> => {
-    try {
-      const response = await axios.get("/notes", { params: { folderId } });
-      console.log("Note Response:", response.data);
-      setNotes(response.data.result.notes);
-      return response.data.result.notes || [];
-    } catch (error) {
-      console.error("Error fetching folder notes:", error);
-      return [];
-    }
-  };
+  const fetchFolderNote = useCallback(
+    async (folderId: number): Promise<INote[]> => {
+      try {
+        const response = await axios.get("/notes", { params: { folderId } });
+        console.log("Note Response:", response.data);
+        setNotes(response.data.result.notes);
+        return response.data.result.notes || [];
+      } catch (error) {
+        console.error("Error fetching folder notes:", error);
+        return [];
+      }
+    },
+    []
+  );
 
   // 노트 delete
   const deleteNote = async (id: number) => {

@@ -8,7 +8,7 @@ import search from "../assets/search.svg";
 import { useAppContext } from "../context/AppContext";
 
 const List: React.FC = () => {
-  const { notes, fetchNote, fetchFolderNote } = useAppContext();
+  const { folders, notes, fetchNote, fetchFolderNote } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
 
@@ -17,12 +17,23 @@ const List: React.FC = () => {
     { value: 1, label: "오래된 순" },
   ];
 
+  // useEffect(() => {
+  //   if (selectedFolderId === null) {
+  //     fetchNote();
+  //   } else {
+  //     fetchFolderNote(selectedFolderId);
+  //   }
+  // }, [selectedFolderId, fetchNote, fetchFolderNote]);
   useEffect(() => {
-    if (selectedFolderId === null) {
-      fetchNote();
-    } else {
-      fetchFolderNote(selectedFolderId);
-    }
+    const fetchData = async () => {
+      if (selectedFolderId === null) {
+        await fetchNote();
+      } else {
+        await fetchFolderNote(selectedFolderId);
+      }
+    };
+
+    fetchData();
   }, [selectedFolderId, fetchNote, fetchFolderNote]);
 
   const sortedNotes = useMemo(() => {
@@ -40,7 +51,6 @@ const List: React.FC = () => {
     });
     return sorted;
   }, [notes, selectedOption]);
-
 
   return (
     <div className="bg-bg-blue">
