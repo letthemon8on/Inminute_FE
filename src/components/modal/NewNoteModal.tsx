@@ -15,13 +15,16 @@ const NewNoteModal: React.FC = () => {
     folders.length > 0 ? folders[0].id : 0
   );
   const [noteTitle, setNoteTitle] = useState<string>("");
+  const [titleErrorMessage, setTitleErrorMessage] = useState<string>("");
+  const [folderErrorMessage, setFolderErrorMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
   const onClickToggleModal = useCallback(() => {
     setOpenModal(!isOpenModal);
-    setErrorMessage("");
+    setTitleErrorMessage("");
+    setFolderErrorMessage("");
   }, [isOpenModal]);
 
   const options = folders.map((folder) => ({
@@ -43,17 +46,23 @@ const NewNoteModal: React.FC = () => {
   };
 
   const handleCreateNote = async () => {
-    if (noteTitle.trim() && selectedOption) {
-      const newNote = await addNote(selectedOption, noteTitle);
-      if (newNote) {
-        setNoteTitle("");
-        setOpenModal(false);
-        nav(`/note/${newNote.id}`);
-      } else {
-        setErrorMessage("노트를 생성하는 데 실패했습니다.");
-      }
+    if (!noteTitle.trim()) {
+      setTitleErrorMessage("회의 제목을 입력해주세요.");
+      return;
+    }
+
+    if (!selectedOption) {
+      setFolderErrorMessage("폴더를 선택해주세요.");
+      return;
+    }
+
+    const newNote = await addNote(selectedOption, noteTitle);
+    if (newNote) {
+      setNoteTitle("");
+      setOpenModal(false);
+      nav(`/note/${newNote.id}`);
     } else {
-      setErrorMessage("회의 제목을 입력해주세요.");
+      setErrorMessage("노트를 생성하는 데 실패했습니다.");
     }
   };
 
@@ -71,7 +80,7 @@ const NewNoteModal: React.FC = () => {
           <div className="mt-4 text-3xl text-gray-500">New Note</div>
           <section className="w-72 mt-8" onKeyDown={handleKeyPress}>
             <h4 className="ml-2 mb-1 text-sm text-gray-400">회의 제목</h4>
-            <form className="mb-3">
+            <form>
               <input
                 ref={inputRef}
                 className="h-9 w-72 rounded-2xl border border-gray-200 px-3 outline-none text-gray-500 text-base"
@@ -79,18 +88,18 @@ const NewNoteModal: React.FC = () => {
                 onChange={(e) => {
                   setNoteTitle(e.target.value);
                   if (e.target.value.trim()) {
-                    setErrorMessage(""); // 입력할 때 에러 메시지를 초기화
+                    setTitleErrorMessage("");
+                    setFolderErrorMessage("");
                   }
                 }}
               />
-              {errorMessage && (
-                <div className="text-pink-300 text-xs mt-1 ml-2">
-                  {errorMessage}
-                </div>
-              )}
             </form>
-            <h4 className="ml-2 mb-1 text-sm text-gray-400">폴더</h4>
-
+            {titleErrorMessage && (
+              <div className="text-pink-300 text-xs mt-1 ml-2">
+                {titleErrorMessage}
+              </div>
+            )}
+            <h4 className="ml-2 mt-3 mb-1 text-sm text-gray-400">폴더</h4>
             <DropDown
               options={options}
               selectedOption={selectedOption}
@@ -100,6 +109,11 @@ const NewNoteModal: React.FC = () => {
               top="top-10"
               py="py-1.5"
             />
+            {folderErrorMessage && (
+              <div className="text-pink-300 text-xs mt-1 ml-2">
+                {folderErrorMessage}
+              </div>
+            )}
           </section>
           <div className="flex mt-10 mb-16">
             <button
