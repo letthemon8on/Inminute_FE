@@ -11,6 +11,7 @@ const List: React.FC = () => {
   const { notes, fetchNote, fetchFolderNote } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const options = [
     { value: 0, label: "최신순" },
@@ -29,10 +30,20 @@ const List: React.FC = () => {
     fetchData();
   }, [selectedFolderId, fetchNote, fetchFolderNote]);
 
-  const sortedNotes = useMemo(() => {
+  // 검색
+  const filteredNotes = useMemo(() => {
     if (!notes || notes.length === 0) return [];
 
-    const sorted = [...notes].sort((a, b) => {
+    return notes.filter((note) =>
+      note.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [notes, searchQuery]);
+
+  // 정렬
+  const sortedNotes = useMemo(() => {
+    if (!filteredNotes || filteredNotes.length === 0) return [];
+
+    const sorted = [...filteredNotes].sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
 
@@ -43,7 +54,7 @@ const List: React.FC = () => {
       }
     });
     return sorted;
-  }, [notes, selectedOption]);
+  }, [filteredNotes, selectedOption]);
 
   return (
     <div className="bg-bg-blue">
@@ -67,7 +78,12 @@ const List: React.FC = () => {
               <div className="my-0.5 text-2xl">
                 <img className="w-6 py-1" src={search} />
               </div>
-              <input className="grow px-2 outline-none" />
+              <input
+                className="grow px-2 outline-none"
+                placeholder="제목을 입력하세요"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <NewNoteModal />
           </div>
