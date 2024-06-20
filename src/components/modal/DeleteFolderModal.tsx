@@ -14,8 +14,8 @@ const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
 }) => {
   const { deleteFolder } = useAppContext();
 
-  const handleDeleteFolder = () => {
-    deleteFolder(folderId);
+  const handleDeleteFolder = async () => {
+    await deleteFolder(folderId);
     onClose();
   };
 

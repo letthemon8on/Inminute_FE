@@ -7,25 +7,27 @@ import trash from "./../assets/trash.svg";
 import zoom from "./../assets/zoom.svg";
 import Folder from "../components/Folder";
 import Navbar from "../components/Navbar";
-import Script from "../components/note/Script";
-import SummaryBySpk from "../components/note/SummaryBySpk";
-import ToDoBySpk from "../components/note/ToDoBySpk";
-import { useAppContext } from "../context/AppContext";
+// import Script from "../components/note/Script";
+// import SummaryBySpk from "../components/note/SummaryBySpk";
+// import ToDoBySpk from "../components/note/ToDoBySpk";
+import { useAppContext, INote } from "../context/AppContext";
 import DeleteNoteModal from "../components/modal/DeleteNoteModal";
 
 const Note: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { notes, updateNoteTitle, updateNoteOneLine } = useAppContext();
   const noteId = parseInt(id || "", 10);
-  const note = notes.find((note) => note.id === noteId);
+  const { updateNoteTitle, updateNoteOneLine, deleteNote, fetchNoteDetail } =
+    useAppContext();
+  const [note, setNote] = useState<INote | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Script");
   const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState<string>(note ? note.name : "");
-  const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
   const [newOneLine, setNewOneLine] = useState<string>(
-    note ? note.oneLineSummary : ""
+    note ? note.oneLineSummary || "" : ""
   );
+  const [isEditingOneLine, setIsEditingOneLine] = useState<boolean>(false);
+  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const oneLineInputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
@@ -42,6 +44,19 @@ const Note: React.FC = () => {
     }
   }, [isEditingOneLine]);
 
+  useEffect(() => {
+    const getNoteDetail = async () => {
+      const detail = await fetchNoteDetail(noteId);
+      if (detail) {
+        setNote(detail);
+        setNewTitle(detail.name);
+        setNewOneLine(detail.oneLineSummary || "");
+      }
+    };
+
+    getNoteDetail();
+  }, [noteId, fetchNoteDetail]);
+
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -56,9 +71,12 @@ const Note: React.FC = () => {
     setNewTitle(e.target.value);
   };
 
-  const handleSaveTitle = () => {
-    if (note && newTitle.trim()) {
-      updateNoteTitle(note.id, newTitle.trim());
+  const handleSaveTitle = async () => {
+    if (note && newTitle?.trim()) {
+      const updatedNote = await updateNoteTitle(note.id, newTitle.trim());
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
       setIsEditingTitle(false);
     }
   };
@@ -80,9 +98,12 @@ const Note: React.FC = () => {
     setNewOneLine(e.target.value);
   };
 
-  const handleSaveOneLine = () => {
-    if (note && newOneLine.trim()) {
-      updateNoteOneLine(note.id, newOneLine.trim());
+  const handleSaveOneLine = async () => {
+    if (note && newOneLine?.trim()) {
+      const updatedNote = await updateNoteOneLine(note.id, newOneLine.trim());
+      if (updatedNote) {
+        setNote(updatedNote);
+      }
       setIsEditingOneLine(false);
     }
   };
@@ -100,6 +121,12 @@ const Note: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleDeleteNote = async () => {
+    await deleteNote(noteId);
+    setIsDeleteModalOpen(false);
+    nav("/list");
+  };
+
   if (!note) {
     return <div>Note not found</div>;
   }
@@ -108,7 +135,7 @@ const Note: React.FC = () => {
     <div className="bg-bg-blue">
       <Navbar />
       <div className="flex w-full min-h-screen ">
-        <Folder />
+        <Folder onSelectFolder={setSelectedFolderId} />
         <section className="bg-white grow px-12">
           <div className="flex justify-between mt-4">
             <div
@@ -120,7 +147,10 @@ const Note: React.FC = () => {
             <div className="flex items-center text-gray-500">
               <span className="mr-4 flex items-center">
                 <img className="w-5 mx-1" src={calendar} />
-                <span> {note.date} {note.day}</span>
+                <span>
+                  {" "}
+                  {note.date} {note.day}
+                </span>
               </span>
               <span className="mr-2 flex items-center">
                 <img className="w-5 mx-1" src={clock} />
@@ -169,6 +199,14 @@ const Note: React.FC = () => {
             <span className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1">
               박상욱
             </span>
+            {/* {note.participantNames.map((participant, index) => (
+              <span
+                key={index}
+                className="bg-pink-100/[.7] rounded-xl px-2.5 mx-1"
+              >
+                {participant.name}
+              </span>
+            ))} 추후 반영 */}
           </div>
           <hr />
           <div className="flex flex-col mx-3">
@@ -177,7 +215,7 @@ const Note: React.FC = () => {
               {isEditingOneLine ? (
                 <input
                   className="w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-gray-600"
-                  value={newOneLine}
+                  value={newOneLine || ""}
                   onChange={handleChangeOneLine}
                   onBlur={handleSaveOneLine}
                   onKeyDown={handleKeyDownOneLine}
@@ -186,7 +224,7 @@ const Note: React.FC = () => {
               ) : (
                 <input
                   className="hover:bg-gray-100 w-full h-10 bg-white shadow-inner shadow-gray-400 rounded-lg px-4 text-black"
-                  value={note.oneLineSummary}
+                  value={note.oneLineSummary || ""}
                   onClick={handleEditOneLine}
                   readOnly
                 />
@@ -227,9 +265,9 @@ const Note: React.FC = () => {
                 </div>
               </div>
               <div className="w-200 h-24 rounded-xl bg-white mb-4">
-                {activeTab === "Script" && <Script />}
+                {/* {activeTab === "Script" && <Script />}
                 {activeTab === "Summary by Speaker" && <SummaryBySpk />}
-                {activeTab === "To Do by Speaker" && <ToDoBySpk />}
+                {activeTab === "To Do by Speaker" && <ToDoBySpk />} */}
               </div>
             </section>
           </div>
@@ -239,6 +277,7 @@ const Note: React.FC = () => {
         <DeleteNoteModal
           id={note.id}
           onClose={() => setIsDeleteModalOpen(false)}
+          onClick={handleDeleteNote}
         />
       )}
     </div>

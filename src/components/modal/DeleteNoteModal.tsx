@@ -7,14 +7,15 @@ import { useNavigate } from "react-router-dom";
 interface DeleteNoteModalProps {
   id: number;
   onClose: () => void;
+  onClick: () => void;
 }
 
 const DeleteNoteModal: React.FC<DeleteNoteModalProps> = ({ id, onClose }) => {
   const { deleteNote } = useAppContext();
   const nav = useNavigate();
 
-  const handleDeleteNote = () => {
-    deleteNote(id);
+  const handleDeleteNote = async () => {
+    await deleteNote(id);
     onClose();
     nav("/list");
   };

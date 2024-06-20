@@ -11,7 +11,7 @@ interface FolderProps {
 }
 
 const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
-  const { folders, notes, addFolder } = useAppContext();
+  const { folders, notes, addFolder, fetchNote } = useAppContext();
   const [newFolder, setNewFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [isComposing, setIsComposing] = useState(false);
@@ -40,6 +40,13 @@ const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
       setFolderName("");
       setNewFolder(false);
     }
+  };
+
+  const handleSelectFolder = (folderId: number | null) => {
+    if (folderId === null) {
+      fetchNote();
+    }
+    onSelectFolder(folderId);
   };
 
   return (
@@ -83,7 +90,7 @@ const Folder: React.FC<FolderProps> = ({ onSelectFolder }) => {
         </div>
         <h3
           onClick={() => {
-            onSelectFolder(null);
+            handleSelectFolder(null);
             nav("/list");
           }}
           className="hover:bg-gray-200 rounded-md mt-1 text-lg flex items-center cursor-pointer"
