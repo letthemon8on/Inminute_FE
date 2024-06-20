@@ -17,7 +17,7 @@ const SummaryBySpk: React.FC = () => {
     <div>
       {/* {note.summary.map((item, index) => (
         <SummaryBySpkItem key={index} noteId={noteId} item={item} />
-      ))} */}
+      ))} 추후 반영 */}
     </div>
   );
 };

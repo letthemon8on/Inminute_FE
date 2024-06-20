@@ -46,9 +46,9 @@ const DropDown: React.FC<DropDownProps> = ({
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside); // 컴포넌트가 마운트될 때
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside); // 컴포넌트가 언마운트될 때
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 

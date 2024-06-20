@@ -17,7 +17,7 @@ const Script: React.FC = () => {
     <section>
       {/* {note.script.map((item, index) => (
         <ScriptItem key={index} noteId={noteId} item={item} />
-      ))} */}
+      ))} 추후 반영 */}
     </section>
   );
 };

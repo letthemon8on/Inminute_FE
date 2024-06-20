@@ -47,8 +47,8 @@ const FolderItem: React.FC<FolderItemProps> = ({
     e.stopPropagation();
     setIsFolderOpen(!isFolderOpen);
     if (!isFolderOpen) {
-      const fetchedNotes = await fetchFolderNote(folder.id); // 폴더가 열릴 때 노트 데이터를 가져옴
-      setFolderNotes(fetchedNotes); // 가져온 노트 데이터를 상태에 저장
+      const fetchedNotes = await fetchFolderNote(folder.id); 
+      setFolderNotes(fetchedNotes);
     }
   };
 

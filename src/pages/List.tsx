@@ -8,7 +8,7 @@ import search from "../assets/search.svg";
 import { useAppContext } from "../context/AppContext";
 
 const List: React.FC = () => {
-  const { folders, notes, fetchNote, fetchFolderNote } = useAppContext();
+  const { notes, fetchNote, fetchFolderNote } = useAppContext();
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
 
@@ -17,13 +17,6 @@ const List: React.FC = () => {
     { value: 1, label: "오래된 순" },
   ];
 
-  // useEffect(() => {
-  //   if (selectedFolderId === null) {
-  //     fetchNote();
-  //   } else {
-  //     fetchFolderNote(selectedFolderId);
-  //   }
-  // }, [selectedFolderId, fetchNote, fetchFolderNote]);
   useEffect(() => {
     const fetchData = async () => {
       if (selectedFolderId === null) {
@@ -55,7 +48,7 @@ const List: React.FC = () => {
   return (
     <div className="bg-bg-blue">
       <Navbar />
-      <div className="flex w-full min-h-screen ">
+      <div className="flex w-full min-h-screen">
         <Folder onSelectFolder={setSelectedFolderId} />
 
         <div className="grow p-4 mr-24 mt-6">

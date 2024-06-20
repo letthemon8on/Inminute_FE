@@ -127,9 +127,18 @@ const Note: React.FC = () => {
     nav("/list");
   };
 
+  // 예외 처리
+
   if (!note) {
     return <div>Note not found</div>;
   }
+
+  // zoom과 연동
+
+  const onZoom = () => {
+    window.location.href =
+      "https://zoom.us/oauth/authorize?response_type=code&client_id=G1cmu02jTSaxutApfmFYVA&redirect_uri=http://localhost:8080/zoomApi";
+  };
 
   return (
     <div className="bg-bg-blue">
@@ -187,7 +196,11 @@ const Note: React.FC = () => {
                 </button>
               </div>
             </div>
-            <img className="w-24 mr-2 cursor-pointer" src={zoom} />
+            <img
+              className="w-24 mr-2 cursor-pointer"
+              onClick={onZoom}
+              src={zoom}
+            />
           </div>
 
           <hr />
@@ -267,7 +280,7 @@ const Note: React.FC = () => {
               <div className="w-200 h-24 rounded-xl bg-white mb-4">
                 {/* {activeTab === "Script" && <Script />}
                 {activeTab === "Summary by Speaker" && <SummaryBySpk />}
-                {activeTab === "To Do by Speaker" && <ToDoBySpk />} */}
+                {activeTab === "To Do by Speaker" && <ToDoBySpk />} 추후 반영 */}
               </div>
             </section>
           </div>
